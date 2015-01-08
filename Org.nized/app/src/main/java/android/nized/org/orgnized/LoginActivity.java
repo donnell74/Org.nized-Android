@@ -129,6 +129,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         View focusView = null;
 
 
+        showProgress(true);
+        mAuthTask = new UserLoginTask(email, password);
+        mAuthTask.execute((Void) null);
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -305,13 +308,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     Log.w("login failure", responseString);
                 }
             });
-
-            try {
-                // Simulate network access.
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                return false;
-            }
 
             // TODO: register the new account here.
             return true;

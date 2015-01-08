@@ -55,6 +55,9 @@ public class APIWrapper {
     public static final String FIND_WITH_EXTRAS_SURVEYS = "surveys/findWithExtras/";
     public static final String FIND_WITH_EXTRAS_QUESTIONS = "questions/findWithExtras/";
     public static final String FIND_WITH_EXTRAS_ANNOUNCEMENTS = "announcements/findWithExtras/";
+    public static final String FIND_ANNOUNCEMENTS_ROLES = "announcements_roles/find/";
+    public static final String FIND_SURVEYS = "surveys/find/";
+    public static final String FIND_SURVEYS_ROLES = "surveys_roles/find/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
