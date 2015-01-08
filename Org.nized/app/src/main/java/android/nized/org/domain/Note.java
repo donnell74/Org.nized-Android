@@ -14,7 +14,7 @@ public class Note {
 	 */
 
 	private int id;
-	private Person person; // from person_email in DB
+	private Person person_email; // from person_email in DB
 	private boolean public_to_person;
 	private String title;
 	private String text;
@@ -29,12 +29,12 @@ public class Note {
 		this.id = id;
 	}
 
-	public Person getPerson() {
-		return person;
+	public Person getPerson_email() {
+		return person_email;
 	}
 
-	public void setPerson(Person person) {
-		this.person = person;
+	public void setPerson_email(Person person_email) {
+		this.person_email = person_email;
 	}
 
 	public boolean getPublicToPerson() {
@@ -90,7 +90,7 @@ public class Note {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
-		result = prime * result + ((person == null) ? 0 : person.hashCode());
+		result = prime * result + ((person_email == null) ? 0 : person_email.hashCode());
 		result = prime * result + (public_to_person ? 1231 : 1237);
 		result = prime * result + ((text == null) ? 0 : text.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -112,11 +112,11 @@ public class Note {
 		if (id != other.id) {
 			return false;
 		}
-		if (person == null) {
-			if (other.person != null) {
+		if (person_email == null) {
+			if (other.person_email != null) {
 				return false;
 			}
-		} else if (!person.equals(other.person)) {
+		} else if (!person_email.equals(other.person_email)) {
 			return false;
 		}
 		if (public_to_person != other.public_to_person) {
@@ -141,7 +141,7 @@ public class Note {
 
 	@Override
 	public String toString() {
-		return "Note [id=" + id + ", person=" + person + ", publicToPerson=" + public_to_person
+		return "Note [id=" + id + ", person_email=" + person_email + ", publicToPerson=" + public_to_person
 				+ ", title=" + title + ", text=" + text + "]";
 	}
 

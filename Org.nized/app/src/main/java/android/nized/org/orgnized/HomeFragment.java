@@ -38,6 +38,22 @@ public class HomeFragment extends Fragment {
     View home_layout = null;
     int viewIdCount = 5;
 
+    private class MyAPI extends APIUtilities {
+
+        @Override
+        public void addToView(JSONObject objToAdd, Class objClass) {
+            if ( objClass == Announcements_Roles.class ) {
+                Log.i("addToView", "Announcements_Roles");
+                addAnnouncements((Announcements_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
+            } else if ( objClass == Surveys_Roles.class ) {
+                Log.i("addToView", "Survey");
+                addSurvey((Surveys_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
+            }
+        }
+    }
+
+    MyAPI myAPI = new MyAPI();
+
     public HomeFragment(){}
 
     @Override
@@ -49,21 +65,6 @@ public class HomeFragment extends Fragment {
         getPerson();
 
         return rootView;
-    }
-
-
-    private class MyAPI extends APIUtilities {
-
-        @Override
-        public void addToView(Object objToAdd, Class objClass) {
-            if ( objClass == Announcements_Roles.class ) {
-                Log.i("addToView", "Announcements_Roles");
-                addAnnouncements((Announcements_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-            } else if ( objClass == Surveys_Roles.class ) {
-                Log.i("addToView", "Survey");
-                addSurvey((Surveys_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-            }
-        }
     }
 
 
@@ -94,6 +95,7 @@ public class HomeFragment extends Fragment {
                 try {
                     Log.i("home array", people.get(0).toString());
                     myPerson = (Person) APIWrapper.parseJSONOjbect((JSONObject) people.get(0), Person.class);
+                    APIWrapper.setLoggedInPerson(myPerson);
                     setPersonAttributes();
                     populateView();
                 } catch (JSONException e) {
@@ -131,12 +133,12 @@ public class HomeFragment extends Fragment {
 
 
     private void getAnnouncements() {
-        getForAllRoles(APIWrapper.FIND_ANNOUNCEMENTS_ROLES, Announcements_Roles.class);
+        myAPI.getForAllRoles(APIWrapper.FIND_ANNOUNCEMENTS_ROLES, myPerson, Announcements_Roles.class);
     }
 
 
     private void getSurveys() {
-        getForAllRoles(APIWrapper.FIND_SURVEYS_ROLES, Surveys_Roles.class);
+        myAPI.getForAllRoles(APIWrapper.FIND_SURVEYS_ROLES, myPerson, Surveys_Roles.class);
     }
 
 

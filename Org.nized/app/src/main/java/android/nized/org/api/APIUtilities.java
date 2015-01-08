@@ -21,7 +21,7 @@ import java.util.Iterator;
  * Created by greg on 1/7/15.
  */
 public abstract class APIUtilities {
-    public abstract void addToView(Object obj, Class objClass);
+    public abstract void addToView(JSONObject obj, Class objClass);
 
     public void getForAllRoles(String url, Person person, final Class objClass) {
         for (Iterator<Role> role = person.getRoles().iterator(); role.hasNext(); ) {
