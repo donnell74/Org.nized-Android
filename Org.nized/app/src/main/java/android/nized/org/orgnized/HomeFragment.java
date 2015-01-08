@@ -1,6 +1,7 @@
 package android.nized.org.orgnized;
 
 import android.app.ActionBar;
+import android.nized.org.api.APIUtilities;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Announcements_Roles;
@@ -51,6 +52,21 @@ public class HomeFragment extends Fragment {
     }
 
 
+    private class MyAPI extends APIUtilities {
+
+        @Override
+        public void addToView(Object objToAdd, Class objClass) {
+            if ( objClass == Announcements_Roles.class ) {
+                Log.i("addToView", "Announcements_Roles");
+                addAnnouncements((Announcements_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
+            } else if ( objClass == Surveys_Roles.class ) {
+                Log.i("addToView", "Survey");
+                addSurvey((Surveys_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
+            }
+        }
+    }
+
+
     private void populateView() {
         getAnnouncements();
         getSurveys();
@@ -67,6 +83,7 @@ public class HomeFragment extends Fragment {
                 // If the response is JSONObject instead of expected JSONArray
                 Log.i("home", person.toString());
                 myPerson = (Person) APIWrapper.parseJSONOjbect(person, Person.class);
+                APIWrapper.setLoggedInPerson(myPerson);
                 setPersonAttributes();
                 populateView();
             }
@@ -97,58 +114,6 @@ public class HomeFragment extends Fragment {
                         .show();
             }
         });
-    }
-
-
-    private void getForAllRoles(String url, final Class objClass) {
-        for (Iterator<Role> role = myPerson.getRoles().iterator(); role.hasNext(); ) {
-            RequestParams requestParams = new RequestParams("role_id", role.next().getRole_id());
-            APIWrapper.get(url, requestParams, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject obj) {
-                    // If the response is JSONObject instead of expected JSONArray
-                    Log.i("home", obj.toString());
-                    addToView(obj, objClass);
-                }
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
-                    // Pull out the first one
-                    try {
-                        for (int i = 0; i < all_objs.length(); i++) {
-                            Log.i("home", all_objs.getJSONObject(i).toString());
-                            addToView(all_objs.getJSONObject(i), objClass);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getActivity(),
-                                "Unable to gather data.",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.w("home failure", responseString);
-                    Toast.makeText(getActivity(),
-                            "Unable to gather data.",
-                            Toast.LENGTH_LONG)
-                            .show();
-                }
-            });
-        }
-    }
-
-
-    private void addToView(JSONObject objToAdd, Class objClass) {
-        if ( objClass == Announcements_Roles.class ) {
-            Log.i("addToView", "Announcements_Roles");
-            addAnnouncements((Announcements_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-        } else if ( objClass == Surveys_Roles.class ) {
-            Log.i("addToView", "Survey");
-            addSurvey((Surveys_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-        }
     }
 
     private void addSurvey(Surveys_Roles survey) {

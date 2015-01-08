@@ -1,8 +1,10 @@
 package android.nized.org.api;
 
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -11,9 +13,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -21,6 +25,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -29,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Iterator;
 
 /**
  * Created by greg on 1/3/15.
@@ -62,6 +69,10 @@ public class APIWrapper {
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
     public static AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+
+    // App wide person objects
+    public static Person loggedInPerson = null;
+    public static Person lastScannedPerson = null;
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         getClient().get(getAbsoluteUrl(url), params, responseHandler);
@@ -116,5 +127,27 @@ public class APIWrapper {
 
         return modelObject;
     }
+
+    public static Person getLoggedInPerson() {
+        return loggedInPerson;
+    }
+
+    public static void setLoggedInPerson(Person loggedInPerson) {
+        APIWrapper.loggedInPerson = loggedInPerson;
+    }
+
+    public static Person getLastScannedPerson() {
+        if ( lastScannedPerson == null ){
+            return loggedInPerson;
+        }
+
+        return lastScannedPerson;
+    }
+
+    public static void setLastScannedPerson(Person lastScannedPerson) {
+        APIWrapper.lastScannedPerson = lastScannedPerson;
+    }
+
+
 
 }
