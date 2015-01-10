@@ -11,6 +11,7 @@ import java.util.List;
 public class Announcement {
 
 	private int id;
+    private String email;
 	private String creator; // email of person who created it is what's passed
 	private String title;
 	private String text;
@@ -27,6 +28,14 @@ public class Announcement {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getCreator() {
         return creator;
@@ -92,85 +101,59 @@ public class Announcement {
 		this.roles = roles;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((creator == null) ? 0 : creator.hashCode());
-		result = prime * result + ((end_date == null) ? 0 : end_date.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
-		result = prime * result + ((start_date == null) ? 0 : start_date.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Announcement other = (Announcement) obj;
-		if (creator == null) {
-			if (other.creator != null) {
-				return false;
-			}
-		} else if (!creator.equals(other.creator)) {
-			return false;
-		}
-		if (end_date == null) {
-			if (other.end_date != null) {
-				return false;
-			}
-		} else if (!end_date.equals(other.end_date)) {
-			return false;
-		}
-		if (id != other.id) {
-			return false;
-		}
-		if (roles == null) {
-			if (other.roles != null) {
-				return false;
-			}
-		} else if (!roles.equals(other.roles)) {
-			return false;
-		}
-		if (start_date == null) {
-			if (other.start_date != null) {
-				return false;
-			}
-		} else if (!start_date.equals(other.start_date)) {
-			return false;
-		}
-		if (text == null) {
-			if (other.text != null) {
-				return false;
-			}
-		} else if (!text.equals(other.text)) {
-			return false;
-		}
-		if (title == null) {
-			if (other.title != null) {
-				return false;
-			}
-		} else if (!title.equals(other.title)) {
-			return false;
-		}
-		return true;
-	}
+        Announcement that = (Announcement) o;
 
-	@Override
-	public String toString() {
-		return "Announcement [id=" + id + ", creator=" + creator + ", title=" + title + ", text="
-				+ text + ", startDate=" + start_date + ", endDate=" + end_date + ", roles=" + roles
-				+ "]";
-	}
+        if (id != that.id) return false;
+        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null)
+            return false;
+        if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (end_date != null ? !end_date.equals(that.end_date) : that.end_date != null)
+            return false;
+        if (roles != null ? !roles.equals(that.roles) : that.roles != null) return false;
+        if (start_date != null ? !start_date.equals(that.start_date) : that.start_date != null)
+            return false;
+        if (text != null ? !text.equals(that.text) : that.text != null) return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null)
+            return false;
 
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (creator != null ? creator.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (start_date != null ? start_date.hashCode() : 0);
+        result = 31 * result + (end_date != null ? end_date.hashCode() : 0);
+        result = 31 * result + (roles != null ? roles.hashCode() : 0);
+        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Announcement{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", creator='" + creator + '\'' +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", start_date=" + start_date +
+                ", end_date=" + end_date +
+                ", roles=" + roles +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

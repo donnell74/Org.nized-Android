@@ -69,4 +69,15 @@ public class Surveys_Roles {
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
+
+
+    @Override
+    public String toString() {
+        return "Surveys_Roles{" +
+                "survey_id=" + survey_id +
+                ", role_id=" + role_id +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

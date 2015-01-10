@@ -21,129 +21,38 @@ public class Person {
 	private boolean is_member;
 	private classYearEnum class_year;
 	private Date last_sync_date;
-	private List<android.nized.org.domain.Checkin> checkins;
+	private List<Checkins> checkins;
 	private List<android.nized.org.domain.ClassBonus> class_bonuses;
 	private List<android.nized.org.domain.Role> roles;
-    @JsonIgnore
-    private List<android.nized.org.domain.RoleName> _roles;
-    @JsonIgnore
+    private List<String> _roles;
     private List<android.nized.org.domain.ClassBonus> _class_bonuses;
-    @JsonIgnore
-    private List<CheckinDate> _checkins;
+    private List<Date> _checkins;
     private Date createdAt;
     private Date updatedAt;
 
-	public String getEmail() {
-		return email;
-	}
+    public enum classYearEnum {
+        FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public enum localPaidEnum {
+        TRUE, FALSE, PENDING
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getFirstName() {
-		return first_name;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setFirstName(String firstName) {
-		this.first_name = firstName;
-	}
-
-	public String getLastName() {
-		return last_name;
-	}
-
-	public void setLastName(String lastName) {
-		this.last_name = lastName;
-	}
-
-	public Date getExpireDate() {
-		return expire_date;
-	}
-
-	public void setExpireDate(Date expireDate) {
-		this.expire_date = expireDate;
-	}
-
-	public String getMobileNumber() {
-		return mobile_number;
-	}
-
-	public void setMobileNumber(String mobileNumber) {
-		this.mobile_number = mobileNumber;
-	}
-
-	public localPaidEnum isLocalPaid() {
-		return is_local_paid;
-	}
-
-	public void setLocalPaid(localPaidEnum isLocalPaid) {
-		this.is_local_paid = isLocalPaid;
-	}
-
-	public boolean isMember() {
-		return is_member;
-	}
-
-	public void setMember(boolean isMember) {
-		this.is_member = isMember;
-	}
-
-	public classYearEnum getClassYear() {
-		return class_year;
-	}
-
-	public void setClassYear(classYearEnum classYear) {
-		this.class_year = classYear;
-	}
-
-	public Date getLastSyncDate() {
-		return last_sync_date;
-	}
-
-	public void setLastSyncDate(Date lastSyncDate) {
-		this.last_sync_date = lastSyncDate;
-	}
-
-	public List<android.nized.org.domain.Checkin> getCheckins() {
-		return checkins;
-	}
-
-	public void setCheckins(List<android.nized.org.domain.Checkin> checkins) {
-		this.checkins = checkins;
-	}
-
-	public List<android.nized.org.domain.ClassBonus> getClassBonuses() {
-		return class_bonuses;
-	}
-
-	public void setClassBonuses(List<android.nized.org.domain.ClassBonus> classBonuses) {
-		this.class_bonuses = classBonuses;
-	}
-
-	public List<android.nized.org.domain.Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<android.nized.org.domain.Role> roles) {
-		this.roles = roles;
-	}
-
-	public enum classYearEnum {
-		FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
-	}
-
-	public enum localPaidEnum {
-		TRUE, FALSE, PENDING
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getFirst_name() {
         return first_name;
@@ -209,12 +118,52 @@ public class Person {
         this.last_sync_date = last_sync_date;
     }
 
+    public List<Checkins> getCheckins() {
+        return checkins;
+    }
+
+    public void setCheckins(List<Checkins> checkins) {
+        this.checkins = checkins;
+    }
+
     public List<ClassBonus> getClass_bonuses() {
         return class_bonuses;
     }
 
     public void setClass_bonuses(List<ClassBonus> class_bonuses) {
         this.class_bonuses = class_bonuses;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<String> get_roles() {
+        return _roles;
+    }
+
+    public void set_roles(List<String> _roles) {
+        this._roles = _roles;
+    }
+
+    public List<ClassBonus> get_class_bonuses() {
+        return _class_bonuses;
+    }
+
+    public void set_class_bonuses(List<ClassBonus> _class_bonuses) {
+        this._class_bonuses = _class_bonuses;
+    }
+
+    public List<Date> get_checkins() {
+        return _checkins;
+    }
+
+    public void set_checkins(List<Date> _checkins) {
+        this._checkins = _checkins;
     }
 
     public Date getCreatedAt() {
@@ -231,24 +180,6 @@ public class Person {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<ClassBonus> get_class_bonuses() {
-        return _class_bonuses;
-    }
-
-    public void set_class_bonuses(List<ClassBonus> _class_bonuses) {
-        this._class_bonuses = _class_bonuses;
-    }
-
-
-
-    public List<CheckinDate> get_checkins() {
-        return _checkins;
-    }
-
-    public void set_checkins(List<CheckinDate> _checkins) {
-        this._checkins = _checkins;
     }
 
     @Override
@@ -338,7 +269,4 @@ public class Person {
                 ", updatedAt=" + updatedAt +
                 '}';
     }
-
-    ;
-
 }

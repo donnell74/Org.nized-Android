@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
                     fragment = new NotesFragment();
                     break;
                 case 3:
-                    fragment = new SurveysFragment();
+                    fragment = new SurveyItemFragment();
                     break;
                 case 4:
                     fragment = new ProfileFragment();

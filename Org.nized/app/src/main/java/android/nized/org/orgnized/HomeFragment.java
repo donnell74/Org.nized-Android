@@ -5,7 +5,11 @@ import android.nized.org.api.APIUtilities;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Announcements_Roles;
+import android.nized.org.domain.Answer;
+import android.nized.org.domain.Checkins;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.PossibleAnswer;
+import android.nized.org.domain.Question;
 import android.nized.org.domain.Role;
 import android.nized.org.domain.Survey;
 import android.nized.org.domain.Surveys_Roles;
@@ -42,10 +46,8 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void addToView(JSONObject objToAdd, Class objClass) {
-            if ( objClass == Announcements_Roles.class ) {
-                Log.i("addToView", "Announcements_Roles");
-                addAnnouncements((Announcements_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-            } else if ( objClass == Surveys_Roles.class ) {
+            Log.i("addToView", objClass.toString());
+            if ( objClass == Surveys_Roles.class ) {
                 Log.i("addToView", "Survey");
                 addSurvey((Surveys_Roles) APIWrapper.parseJSONOjbect(objToAdd, objClass));
             }
@@ -63,6 +65,45 @@ public class HomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         getPerson();
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("question_id", 1);
+
+        APIWrapper.get(APIWrapper.FIND_POSSIBLE_ANSWERS, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject announcement) {
+                // If the response is JSONObject instead of expected JSONArray
+                PossibleAnswer test = (PossibleAnswer) APIWrapper.parseJSONOjbect(announcement, PossibleAnswer.class);
+                Log.i("test", test.toString());
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                // Pull out the first one
+                try {
+                    Log.i("test", all_objs.toString());
+                    for (int i = 0; i < all_objs.length(); i++) {
+                        PossibleAnswer test = (PossibleAnswer) APIWrapper.parseJSONOjbect(all_objs.getJSONObject(i), PossibleAnswer.class);
+                        Log.i("test", test.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(),
+                            "Unable to gather data.",
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.w("home failure", responseString);
+                Toast.makeText(getActivity(),
+                        "Unable to gather data.",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
 
         return rootView;
     }
@@ -82,7 +123,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
                 // If the response is JSONObject instead of expected JSONArray
-                Log.i("home", person.toString());
                 myPerson = (Person) APIWrapper.parseJSONOjbect(person, Person.class);
                 APIWrapper.setLoggedInPerson(myPerson);
                 setPersonAttributes();
@@ -93,7 +133,6 @@ public class HomeFragment extends Fragment {
             public void onSuccess(int statusCode, Header[] headers, JSONArray people) {
                 // Pull out the first one
                 try {
-                    Log.i("home array", people.get(0).toString());
                     myPerson = (Person) APIWrapper.parseJSONOjbect((JSONObject) people.get(0), Person.class);
                     APIWrapper.setLoggedInPerson(myPerson);
                     setPersonAttributes();
@@ -119,6 +158,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void addSurvey(Surveys_Roles survey) {
+        Log.i("addSurvey", survey.getSurvey_id().toString());
         TextView textViewSurvey = new TextView(getView().getContext());
         textViewSurvey.setText("Survey: " + survey.getSurvey_id().getName());
         textViewSurvey.setId(5);
@@ -133,7 +173,42 @@ public class HomeFragment extends Fragment {
 
 
     private void getAnnouncements() {
-        myAPI.getForAllRoles(APIWrapper.FIND_ANNOUNCEMENTS_ROLES, myPerson, Announcements_Roles.class);
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("email", "donnell74@live.missouristate.edu");
+
+        APIWrapper.get(APIWrapper.FIND_ANNOUNCEMENTS, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject announcement) {
+                // If the response is JSONObject instead of expected JSONArray
+                APIWrapper.parseJSONOjbect(announcement, Announcement.class);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                // Pull out the first one
+                try {
+                    for (int i = 0; i < all_objs.length(); i++) {
+                        Log.i("getForAllRoles", "test");
+                        addAnnouncements((Announcement) APIWrapper.parseJSONOjbect(all_objs.getJSONObject(i), Announcement.class));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(),
+                            "Unable to gather data.",
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.w("home failure", responseString);
+                Toast.makeText(getActivity(),
+                        "Unable to gather data.",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 
 
@@ -151,9 +226,10 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void addAnnouncements(Announcements_Roles announcement) {
+    private void addAnnouncements(Announcement announcement) {
+        Log.i("addAnnouncements", announcement.toString());
         TextView textViewAnnouncement = new TextView(getView().getContext());
-        textViewAnnouncement.setText("Announcement: " + announcement.getAnnouncement_id().getTitle());
+        textViewAnnouncement.setText("Announcement: " + announcement.getTitle());
         textViewAnnouncement.setId(5);
         textViewAnnouncement.setLayoutParams(new ActionBar.LayoutParams(
                 ViewGroup.LayoutParams.FILL_PARENT,

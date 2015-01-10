@@ -8,10 +8,6 @@ import java.util.Date;
 @JsonSerialize
 @JsonDeserialize
 public class ClassBonus {
-
-    /*
-         *
-         */
     private String email;
 	private int class_bonus_id;
 	private String course_code;

@@ -73,4 +73,14 @@ public class Announcements_Roles {
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Announcements_Roles{" +
+                "announcement_id=" + announcement_id +
+                ", role_id=" + role_id +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

@@ -2,6 +2,7 @@ package android.nized.org.api;
 
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Role;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,12 +37,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by greg on 1/3/15.
  */
 public class APIWrapper {
-    private static final String BASE_URL = "http://www.reorconsultants.com:1337/";
+    //private static final String BASE_URL = "http://www.reorconsultants.com:1337/";
+    private static final String BASE_URL = "http://192.168.1.5:1337/";
     public static final String INSERT_PERSON = "person/insertperson/";
     public static final String FIND_PERSON = "person/find/";
     public static final String CHECK_IF_USER_EXIST = "person/checkifuserexist/";
@@ -62,10 +65,14 @@ public class APIWrapper {
     public static final String FIND_WITH_EXTRAS_SURVEYS = "surveys/findWithExtras/";
     public static final String FIND_WITH_EXTRAS_QUESTIONS = "questions/findWithExtras/";
     public static final String FIND_WITH_EXTRAS_ANNOUNCEMENTS = "announcements/findWithExtras/";
-    public static final String FIND_ANNOUNCEMENTS_ROLES = "announcements_roles/find/";
+    public static final String FIND_ANNOUNCEMENTS = "announcements/find/";
     public static final String FIND_SURVEYS = "surveys/find/";
     public static final String FIND_SURVEYS_ROLES = "surveys_roles/find/";
     public static final String FIND_NOTES = "notes/find/";
+    public static final String FIND_ANSWERS = "answers/find/";
+    public static final String FIND_CHECKINS = "checkins/find/";
+    public static final String FIND_QUESTIONS = "questions/find/";
+    public static final String FIND_POSSIBLE_ANSWERS = "possibleanswers/find/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
@@ -94,39 +101,79 @@ public class APIWrapper {
         return asyncHttpClient;
     }
 
-    public static Object parseJSONOjbect(JSONObject response, Class domain) {
-        Object modelObject = null;
+    public static Object parseJSONOjbect(final JSONObject response, final Class domain) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final Object modelObjects [] = {null};
+        Thread parseThread = new HandlerThread("ParseHandler") {
+            @Override
+            public void run() {
+                Looper.prepare();
+                try
+                {
+                    ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+                    modelObjects[0] = mapper.readValue(response.toString(), domain);
+                    Log.w("test", modelObjects[0].toString());
+                } catch ( JsonMappingException e ) {
+                    e.printStackTrace();
+                } catch ( JsonParseException e ) {
+                    e.printStackTrace();
+                } catch ( IOException e ) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+
+                Looper.loop();
+            }
+        };
+
+        parseThread.start();
+
         try {
-            ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-            modelObject = mapper.readValue(response.toString(), domain);
-            Log.w("test", modelObject.toString());
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            latch.await(); // Wait for countDown() in the UI thread.
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        return modelObject;
+        return modelObjects[0];
     }
 
 
-    public static Object parseJSONOjbect(JsonParser response, Class domain) {
-        Object modelObject = null;
+    public static Object parseJSONOjbect(final JsonParser response, final Class domain) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final Object modelObjects [] = {null};
+        Thread parseThread = new HandlerThread("ParseHandler") {
+            @Override
+            public void run() {
+                Looper.prepare();
+                try
+                {
+                    ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+                    modelObjects[0] = mapper.readValue(response, domain);
+                    Log.w("test", modelObjects[0].toString());
+                } catch ( JsonMappingException e ) {
+                    e.printStackTrace();
+                } catch ( JsonParseException e ) {
+                    e.printStackTrace();
+                } catch ( IOException e ) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+
+                Looper.loop();
+            }
+        };
+
+        parseThread.start();
+
         try {
-            ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-            modelObject = mapper.readValue(response, domain);
-            Log.w("test", modelObject.toString());
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            latch.await(); // Wait for countDown() in the UI thread.
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        return modelObject;
+        return modelObjects[0];
     }
 
     public static Person getLoggedInPerson() {

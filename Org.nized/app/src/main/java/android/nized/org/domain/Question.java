@@ -15,7 +15,7 @@ public class Question {
 	 */
 
 	private int id;
-	private Survey survey; // From survey_id in DB
+	private int survey_id; // From survey_id in DB
 	private String question_text;
 	private List<PossibleAnswer> possible_answers;
 	private List<Role> roles;
@@ -31,15 +31,15 @@ public class Question {
 		this.id = id;
 	}
 
-	public Survey getSurvey() {
-		return survey;
-	}
+    public int getSurvey_id() {
+        return survey_id;
+    }
 
-	public void setSurveyId(Survey survey) {
-		this.survey = survey;
-	}
+    public void setSurvey_id(int survey_id) {
+        this.survey_id = survey_id;
+    }
 
-	public String getQuestionText() {
+    public String getQuestionText() {
 		return question_text;
 	}
 
@@ -62,10 +62,6 @@ public class Question {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
-    }
 
     public String getQuestion_text() {
         return question_text;
@@ -111,73 +107,53 @@ public class Question {
 		RADIO, CHECKBOX, TEXT
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((possible_answers == null) ? 0 : possible_answers.hashCode());
-		result = prime * result + ((question_text == null) ? 0 : question_text.hashCode());
-		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
-		result = prime * result + ((survey == null) ? 0 : survey.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Question other = (Question) obj;
-		if (id != other.id) {
-			return false;
-		}
-		if (possible_answers == null) {
-			if (other.possible_answers != null) {
-				return false;
-			}
-		} else if (!possible_answers.equals(other.possible_answers)) {
-			return false;
-		}
-		if (question_text == null) {
-			if (other.question_text != null) {
-				return false;
-			}
-		} else if (!question_text.equals(other.question_text)) {
-			return false;
-		}
-		if (roles == null) {
-			if (other.roles != null) {
-				return false;
-			}
-		} else if (!roles.equals(other.roles)) {
-			return false;
-		}
-		if (survey == null) {
-			if (other.survey != null) {
-				return false;
-			}
-		} else if (!survey.equals(other.survey)) {
-			return false;
-		}
-		if (type != other.type) {
-			return false;
-		}
-		return true;
-	}
+        Question question = (Question) o;
 
-	@Override
-	public String toString() {
-		return "Question [id=" + id + ", survey=" + survey + ", questionText=" + question_text
-				+ ", possible_answers=" + possible_answers + ", roles=" + roles + ", type=" + type
-				+ "]";
-	}
+        if (id != question.id) return false;
+        if (survey_id != question.survey_id) return false;
+        if (createdAt != null ? !createdAt.equals(question.createdAt) : question.createdAt != null)
+            return false;
+        if (possible_answers != null ? !possible_answers.equals(question.possible_answers) : question.possible_answers != null)
+            return false;
+        if (question_text != null ? !question_text.equals(question.question_text) : question.question_text != null)
+            return false;
+        if (roles != null ? !roles.equals(question.roles) : question.roles != null) return false;
+        if (type != question.type) return false;
+        if (updatedAt != null ? !updatedAt.equals(question.updatedAt) : question.updatedAt != null)
+            return false;
 
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + survey_id;
+        result = 31 * result + (question_text != null ? question_text.hashCode() : 0);
+        result = 31 * result + (possible_answers != null ? possible_answers.hashCode() : 0);
+        result = 31 * result + (roles != null ? roles.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", survey_id=" + survey_id +
+                ", question_text='" + question_text + '\'' +
+                ", possible_answers=" + possible_answers +
+                ", roles=" + roles +
+                ", type=" + type +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }
