@@ -185,10 +185,6 @@ public class APIWrapper {
     }
 
     public static Person getLastScannedPerson() {
-        if ( lastScannedPerson == null ){
-            return loggedInPerson;
-        }
-
         return lastScannedPerson;
     }
 

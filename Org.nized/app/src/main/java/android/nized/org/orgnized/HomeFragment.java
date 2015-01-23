@@ -1,6 +1,8 @@
 package android.nized.org.orgnized;
 
 import android.app.ActionBar;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
 import android.nized.org.api.APIUtilities;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
@@ -13,6 +15,7 @@ import android.nized.org.domain.Question;
 import android.nized.org.domain.Role;
 import android.nized.org.domain.Survey;
 import android.nized.org.domain.Surveys_Roles;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.app.Fragment;
@@ -40,7 +43,6 @@ import java.util.concurrent.Callable;
 public class HomeFragment extends Fragment {
     Person myPerson = null;
     View home_layout = null;
-    int viewIdCount = 5;
 
     private class MyAPI extends APIUtilities {
 
@@ -64,46 +66,12 @@ public class HomeFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        getPerson();
+        home_layout = rootView;
+        myPerson = APIWrapper.getLoggedInPerson();
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("question_id", 1);
-
-        APIWrapper.get(APIWrapper.FIND_POSSIBLE_ANSWERS, requestParams, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject announcement) {
-                // If the response is JSONObject instead of expected JSONArray
-                PossibleAnswer test = (PossibleAnswer) APIWrapper.parseJSONOjbect(announcement, PossibleAnswer.class);
-                Log.i("test", test.toString());
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
-                // Pull out the first one
-                try {
-                    Log.i("test", all_objs.toString());
-                    for (int i = 0; i < all_objs.length(); i++) {
-                        PossibleAnswer test = (PossibleAnswer) APIWrapper.parseJSONOjbect(all_objs.getJSONObject(i), PossibleAnswer.class);
-                        Log.i("test", test.toString());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(),
-                            "Unable to gather data.",
-                            Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.w("home failure", responseString);
-                Toast.makeText(getActivity(),
-                        "Unable to gather data.",
-                        Toast.LENGTH_LONG)
-                        .show();
-            }
-        });
+        // setup view using myPerson
+        setPersonAttributes();
+        populateView();
 
         return rootView;
     }
@@ -115,60 +83,20 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void getPerson() {
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("email", "donnell74@live.missouristate.edu");
-
-        APIWrapper.get(APIWrapper.FIND_PERSON, requestParams, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
-                // If the response is JSONObject instead of expected JSONArray
-                myPerson = (Person) APIWrapper.parseJSONOjbect(person, Person.class);
-                APIWrapper.setLoggedInPerson(myPerson);
-                setPersonAttributes();
-                populateView();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray people) {
-                // Pull out the first one
-                try {
-                    myPerson = (Person) APIWrapper.parseJSONOjbect((JSONObject) people.get(0), Person.class);
-                    APIWrapper.setLoggedInPerson(myPerson);
-                    setPersonAttributes();
-                    populateView();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(),
-                            "Unable to gather data.",
-                            Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.w("home failure", responseString);
-                Toast.makeText(getActivity(),
-                        "Unable to gather data.",
-                        Toast.LENGTH_LONG)
-                        .show();
-            }
-        });
-    }
-
     private void addSurvey(Surveys_Roles survey) {
-        Log.i("addSurvey", survey.getSurvey_id().toString());
-        TextView textViewSurvey = new TextView(getView().getContext());
-        textViewSurvey.setText("Survey: " + survey.getSurvey_id().getName());
-        textViewSurvey.setId(5);
-        textViewSurvey.setLayoutParams(new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
+        if ( home_layout != null ) {
+            Log.i("addSurvey", survey.getSurvey_id().toString());
+            TextView textViewSurvey = new TextView(getView().getContext());
+            textViewSurvey.setText("Survey: " + survey.getSurvey_id().getName());
+            textViewSurvey.setId(5);
+            textViewSurvey.setLayoutParams(new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.FILL_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
 
-        LinearLayout linearLayoutHome = (LinearLayout)(home_layout.findViewById(R.id.layout_home));
-        linearLayoutHome.addView(textViewSurvey);
+            LinearLayout linearLayoutHome = (LinearLayout) (home_layout.findViewById(R.id.layout_home));
+            linearLayoutHome.addView(textViewSurvey);
+        }
     }
 
 
@@ -218,25 +146,28 @@ public class HomeFragment extends Fragment {
 
 
     private void setPersonAttributes() {
-        home_layout = getView();
-
-        // set email
-        TextView textViewPersonName = (TextView) home_layout.findViewById(R.id.person_name);
-        textViewPersonName.setText("Hello " + myPerson.getFirst_name());
+        if ( home_layout != null ) {
+            // set email
+            TextView textViewPersonName = (TextView) home_layout.findViewById(R.id.person_name);
+            textViewPersonName.setText("Hello " + myPerson.getFirst_name());
+        }
     }
 
 
     private void addAnnouncements(Announcement announcement) {
-        Log.i("addAnnouncements", announcement.toString());
-        TextView textViewAnnouncement = new TextView(getView().getContext());
-        textViewAnnouncement.setText("Announcement: " + announcement.getTitle());
-        textViewAnnouncement.setId(5);
-        textViewAnnouncement.setLayoutParams(new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
+        if ( home_layout != null ) {
+            Log.i("addAnnouncements", announcement.toString());
+            TextView textViewAnnouncement = new TextView(getView().getContext());
+            textViewAnnouncement.setText("Announcement: " + announcement.getTitle());
+            textViewAnnouncement.setId(5);
+            textViewAnnouncement.setLayoutParams(new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.FILL_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
 
-        LinearLayout linearLayoutHome = (LinearLayout)(home_layout.findViewById(R.id.layout_home));
-        linearLayoutHome.addView(textViewAnnouncement);
+            LinearLayout linearLayoutHome = (LinearLayout) (home_layout.findViewById(R.id.layout_home));
+            linearLayoutHome.addView(textViewAnnouncement);
+        }
     }
+
 }

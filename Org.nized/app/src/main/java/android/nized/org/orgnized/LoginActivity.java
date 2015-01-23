@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.nized.org.api.APIWrapper;
@@ -30,10 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
@@ -41,9 +39,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -51,13 +53,6 @@ import java.util.List;
  */
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -75,7 +70,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.person);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -129,9 +124,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         View focusView = null;
 
 
-        showProgress(true);
-        mAuthTask = new UserLoginTask(email, password);
-        mAuthTask.execute((Void) null);
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -284,33 +276,62 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             requestParams.put("email", mEmail);
             requestParams.put("password", mPassword);
 
-            Person myPerson = null;
-            final StringBuilder stringBuilder = new StringBuilder("");
+            final CountDownLatch latch = new CountDownLatch(1);
+            final boolean[] result = new boolean[1];
             APIWrapper.post(APIWrapper.LOGIN_PERSON, requestParams, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
                     // If the response is JSONObject instead of expected JSONArray
-                    Log.i("login", person.toString());
+                    Log.i("login a", person.toString());
+                    result[0] = true;
+                    APIWrapper.setLoggedInPerson((Person) APIWrapper.parseJSONOjbect(person, Person.class));
+                    latch.countDown();
                 }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray people) {
                     // Pull out the first one
                     try {
-                        Log.i("login", people.get(0).toString());
+                        Log.i("login b", people.get(0).toString());
+                        result[0] = true;
+                        APIWrapper.setLoggedInPerson((Person) APIWrapper.parseJSONOjbect(
+                                people.getJSONObject(0), Person.class));
+                        latch.countDown();
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        latch.countDown();
                     }
+                }
+
+                @Override
+                public void onSuccess(int statusCode, org.apache.http.Header[] headers, java.lang.String responseString) {
+                    Log.i("login", "Response String: " + responseString);
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     Log.w("login failure", responseString);
+                    result[0] = false;
+                    latch.countDown();
+                }
+
+                @Override
+                public void onFailure(int statusCode, org.apache.http.Header[] headers, java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
+                    Log.i("login", "Response: " + errorResponse.toString());
+                    result[0] = false;
+                    latch.countDown();
                 }
             });
 
+            try {
+                latch.await(); // Wait for countDown() in the UI thread.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             // TODO: register the new account here.
-            return true;
+            return result[0];
+
         }
 
         @Override

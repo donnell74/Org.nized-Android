@@ -58,7 +58,6 @@ public abstract class APIUtilities {
             }
         } catch (NullPointerException e) {
             Log.e("getForALlRoles", "Null pointer");
-            e.printStackTrace();
             return;
         }
     }
