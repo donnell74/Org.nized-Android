@@ -1,13 +1,16 @@
 package android.nized.org.domain;
 
-import java.util.Date;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.Date;
+import java.util.List;
+
 @JsonSerialize
 @JsonDeserialize
+@JsonIgnoreProperties({"roles"})
 public class Survey {
 
 	/*
@@ -19,7 +22,6 @@ public class Survey {
 	private Date start_date;
 	private Date end_date;
 	private List<Question> questions;
-	private List<Role> roles;
     private Date createdAt;
     private Date updatedAt;
 
@@ -69,14 +71,6 @@ public class Survey {
 
 	public void setQuestions(List<Question> questions) {
 		this.questions = questions;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
     public Date getCreatedAt() {

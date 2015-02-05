@@ -29,6 +29,9 @@
         <item>Feedback</item>
         <item>Announcements</item>
         <item>Last Scanned Profile</item>
+        <item>Class Bonuses</item>
+        <item>People</item>
+        <item>Register</item>
     </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -36,5 +39,12 @@
     <string name="title_activity_scan">ScanActivity</string>
     <string name="error">Error</string>
     <string name="no_nfc">No NFC found on this device</string>
+    <string name="attendances_header">Attendance:</string>
+    <string name="surveys_header">Current Surveys:</string>
+    <string name="announcements_header">Announcements:</string>
+    <string name="check_email">Check Email</string>
+    <string name="first_name_label">First Name</string>
+    <string name="last_name_label">Last Name</string>
+    <string name="create_person">Create Person</string>
 
 </resources>

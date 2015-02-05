@@ -2,26 +2,21 @@ package android.nized.org.orgnized;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nized.org.api.APIWrapper;
-import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Checkins;
 import android.nized.org.domain.Person;
+import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.Settings;
-import android.support.v4.app.FragmentManager;
-import android.net.Uri;
-import android.support.v4.app.FragmentTransaction;
-import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +29,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -46,11 +40,14 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
-    private String[] mNavTitles;
+    private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -60,27 +57,34 @@ public class MainActivity extends ActionBarActivity {
     private PendingIntent mPendingIntent;
     private NdefMessage mNdefPushMessage;
     private static final DateFormat TIME_FORMAT = SimpleDateFormat.getDateTimeInstance();
+    private String mTagID = "";
 
     private LinearLayout mTagContent;
 
     private AlertDialog mDialog;
 
-    // For switching the currently view fragment
-    private static int HOME = 0;
-    private static int ATTENDANCE = 1;
-    private static int NOTES = 2;
-    private static int PROFILE = 3;
-    private static int SURVEYS = 4;
-    private static int ANNOUCNEMENTS = 5;
-    private static int LASTSCANNEDPROFILE = 6;
-
+    // used for passing position into change fragment
+    public enum Fragments {
+        HOMEFRAGMENT,
+        ATTENDANCEFRAGMENT,
+        NOTES,
+        MYPROFILE,
+        SURVEYS,
+        FEEDBACK,
+        ANNOUNCEMENTS,
+        LASTSCANNED,
+        CLASSBONUSES,
+        PEOPLE,
+        REGISTER
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavTitles = getResources().getStringArray(R.array.nav_titles_array);
+        mNavTitles = new ArrayList<String>(Arrays.asList( getResources().getStringArray(R.array.nav_titles_array) ));
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -165,7 +169,7 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void changeFragment(int position) {
+    public void changeFragment(int position) {
         Fragment fragment = null;
         Bundle args = new Bundle();
         switch (position) {
@@ -197,6 +201,17 @@ public class MainActivity extends ActionBarActivity {
                 args.putBoolean("showLastScanned", true);
                 fragment.setArguments(args);
                 break;
+            case 8:
+                Log.e("Class Bonuses", "You still need to implement this");
+                break;
+            case 9:
+                Log.e("People", "You still need to implement this");
+                break;
+            case 10:
+                fragment = new RegisterFragment();
+                args.putString("card_id", mTagID);
+                fragment.setArguments(args);
+                break;
             default:
                 fragment = new HomeFragment();
                 break;
@@ -210,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            setTitle(mNavTitles[position]);
+            setTitle(mNavTitles.get(position));
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             // error in creating fragment
@@ -305,9 +320,15 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void checkInPerson(Long tagID) {
+
+    public void checkInPerson(final Long tagID) {
+        checkInPerson(tagID.toString());
+    }
+
+
+    public void checkInPerson(final String tagID) {
         RequestParams requestParams = new RequestParams();
-        requestParams.put("card_id", tagID.toString());
+        requestParams.put("card_id", tagID);
 
         APIWrapper.get(APIWrapper.CHECK_IN_PERSON, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -353,6 +374,32 @@ public class MainActivity extends ActionBarActivity {
                         "Person has already checked in today.",
                         Toast.LENGTH_LONG)
                         .show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                Log.w("check in person failure", response.toString());
+                try {
+                    switch (response.getInt("code")) {
+                        case Checkins.UNKNOWN_USER:
+                            Toast.makeText(getApplicationContext(),
+                                    "Scanned card is unknown, please ask for email.",
+                                    Toast.LENGTH_LONG)
+                                    .show();
+
+                            mTagID = tagID;
+                            changeFragment(10);
+                            break;
+                        case Checkins.ALREADY_CHECKED_IN:
+                            Toast.makeText(getApplicationContext(),
+                                    "Person has already checked in today.",
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                            break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

@@ -1,16 +1,16 @@
 package android.nized.org.domain;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
 public class Checkins {
+    static final public int UNKNOWN_USER = 1;
+    static final public int ALREADY_CHECKED_IN = 2;
+
     private int id;
     private String email; // Based on person stored in DB
     private Date date_scanned;

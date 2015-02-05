@@ -1,10 +1,10 @@
 package android.nized.org.domain;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Date;
+import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize

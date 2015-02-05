@@ -3,10 +3,11 @@ package android.nized.org.orgnized;
 /**
  * Created by greg on 12/21/14.
  */
-import android.view.View;
-import android.support.v4.app.Fragment;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 public class AnnouncementsFragment extends Fragment {
