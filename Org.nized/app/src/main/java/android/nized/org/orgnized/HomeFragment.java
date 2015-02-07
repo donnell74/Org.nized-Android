@@ -9,6 +9,7 @@ import android.nized.org.domain.Checkins;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Survey;
 import android.nized.org.domain.Surveys_Roles;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.HandlerThread;
@@ -44,8 +45,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class HomeFragment extends Fragment {
-    Person myPerson = null;
-    View home_layout = null;
+    private Person myPerson = null;
+    public View home_layout = null;
 
     private class MyAPI extends APIUtilities {
 
@@ -55,7 +56,7 @@ public class HomeFragment extends Fragment {
             if ( objClass == Survey.class ) {
                 Log.i("addToView", "Survey");
                 addSurvey((Survey) APIWrapper.parseJSONOjbect(objToAdd, objClass));
-            } else if ( objClass == Announcements_Roles.class ) {
+            } else if ( objClass == Announcement.class ) {
                 Log.i("addToView", "Announcements");
                 addAnnouncements((Announcement) APIWrapper.parseJSONOjbect(objToAdd, objClass));
             }
@@ -82,7 +83,6 @@ public class HomeFragment extends Fragment {
 
         return rootView;
     }
-
 
     private boolean acquireView() {
         if ( home_layout != null )
@@ -126,73 +126,72 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void addTextView(String text, int id) {
-        addTextView(text, id, new ActionBar.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-    }
+    public class AddRowTask extends AsyncTask <Object, Integer, LinearLayout> {
+        int id = 0;
+
+        @Override
+        protected LinearLayout doInBackground(Object[] objects) {
+
+            try {
+                String leftText = (String) objects[0];
+                String rightText = (String) objects[1];
+                this.id = (int) objects[2];
+
+                LinearLayout row = new LinearLayout(home_layout.getContext());
+
+                // add textLeft to tableRow
+                TextView textViewLeft = createTextView(leftText, new TableLayout.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        .25f
+                ), Gravity.LEFT);
+                row.addView(textViewLeft);
+
+                // add textRight to tableRow
+                TextView textViewRight = createTextView(rightText, new TableLayout.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        0.75f
+                ), Gravity.RIGHT);
+                row.addView(textViewRight);
+
+                return row;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
 
 
-    private void addTextView(String text, int id, ActionBar.LayoutParams params) {
-        TextView textViewSurvey = new TextView(home_layout.getContext());
-        textViewSurvey.setText(text);
-        textViewSurvey.setId(5);
-        textViewSurvey.setTextSize(16);
-        textViewSurvey.setLayoutParams(params);
+        private TextView createTextView(String text, ViewGroup.LayoutParams params, int gravity) {
+            TextView textView = new TextView(home_layout.getContext());
+            textView.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
+            textView.setLayoutParams(params);
+            textView.setText(text);
+            textView.setId(5);
+            textView.setTextSize(16);
+            textView.setSingleLine(true);
+            textView.setGravity(gravity);
 
-        LinearLayout linearLayoutHome = (LinearLayout) (home_layout.findViewById(id));
-        linearLayoutHome.addView(textViewSurvey);
-    }
+            return textView;
+        }
 
-
-    private TextView createTextView(String text, ViewGroup.LayoutParams params, int gravity) {
-        TextView textView = new TextView(home_layout.getContext());
-        textView.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
-        textView.setLayoutParams(params);
-        textView.setText(text);
-        textView.setId(5);
-        textView.setTextSize(16);
-        textView.setSingleLine(true);
-        textView.setGravity(gravity);
-
-        return textView;
-    }
-
-
-
-    private void addRow(String leftText, String rightText, int id)
-    {
-        LinearLayout row = new LinearLayout(home_layout.getContext());
-
-        // add textLeft to tableRow
-        TextView textViewLeft = createTextView(leftText, new TableLayout.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT,
-                .25f
-        ), Gravity.LEFT);
-        row.addView(textViewLeft);
-
-        // add textRight to tableRow
-        TextView textViewRight = createTextView(rightText, new TableLayout.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT,
-                0.75f
-        ), Gravity.RIGHT);
-        row.addView(textViewRight);
-
-        // add tablerow to tablelayout
-        LinearLayout linearLayout = (LinearLayout) home_layout.findViewById(id);
-        linearLayout.addView(row);
+        @Override
+        protected void onPostExecute(LinearLayout row) {
+            // add tablerow to tablelayout
+            LinearLayout linearLayout = (LinearLayout) home_layout.findViewById(id);
+            linearLayout.addView(row);
+        }
     }
 
 
     private void addAttendances(JSONObject attendance) {
         if ( acquireView() ) {
             try {
-                addRow("Total:   ", String.valueOf(attendance.getInt("total")), R.id.attendances);
-                addRow("Members: ", String.valueOf(attendance.getInt("member")), R.id.attendances);
-                addRow("General: ", String.valueOf(attendance.getInt("general")), R.id.attendances);
+                new AddRowTask().execute("Total:   ", String.valueOf(attendance.getInt("total")), R.id.attendances);
+                new AddRowTask().execute("Members: ", String.valueOf(attendance.getInt("member")), R.id.attendances);
+                new AddRowTask().execute("General: ", String.valueOf(attendance.getInt("general")), R.id.attendances);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -202,7 +201,16 @@ public class HomeFragment extends Fragment {
 
     private void addSurvey(Survey survey) {
         if ( acquireView() ) {
-            addRow(survey.getName(), String.valueOf(survey.getEnd_date()), R.id.surveys);
+            new AddRowTask().execute(survey.getName(), String.valueOf(survey.getEnd_date()), R.id.surveys);
+        }
+    }
+
+
+    private void addAnnouncements(Announcement announcement) {
+        if ( acquireView() ) {
+            new AddRowTask().execute(announcement.getTitle(),
+                    String.valueOf(announcement.getStart_date()),
+                    R.id.announcements);
         }
     }
 
@@ -224,14 +232,4 @@ public class HomeFragment extends Fragment {
             textViewPersonName.setText("Hello " + myPerson.getFirst_name());
         }
     }
-
-
-    private void addAnnouncements(Announcement announcement) {
-        if ( acquireView() ) {
-            addRow(announcement.getTitle(),
-                    String.valueOf(announcement.getStart_date()),
-                    R.id.announcements);
-        }
-    }
-
 }

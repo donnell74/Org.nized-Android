@@ -17,7 +17,7 @@ public class Announcement {
 	private String text;
 	private Date start_date;
 	private Date end_date;
-	private List<android.nized.org.domain.Role> roles;
+	private List<Announcements_Roles> roles;
     private Date createdAt;
     private Date updatedAt;
 
@@ -93,13 +93,13 @@ public class Announcement {
         this.updatedAt = updatedAt;
     }
 
-    public List<android.nized.org.domain.Role> getRoles() {
-		return roles;
-	}
+    public List<Announcements_Roles> getRoles() {
+        return roles;
+    }
 
-	public void setRoles(List<android.nized.org.domain.Role> roles) {
-		this.roles = roles;
-	}
+    public void setRoles(List<Announcements_Roles> roles) {
+        this.roles = roles;
+    }
 
     @Override
     public boolean equals(Object o) {

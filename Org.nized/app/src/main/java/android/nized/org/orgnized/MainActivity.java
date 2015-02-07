@@ -3,6 +3,7 @@ package android.nized.org.orgnized;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -47,6 +48,7 @@ import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
+    public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -64,19 +66,18 @@ public class MainActivity extends ActionBarActivity {
     private AlertDialog mDialog;
 
     // used for passing position into change fragment
-    public enum Fragments {
-        HOMEFRAGMENT,
-        ATTENDANCEFRAGMENT,
-        NOTES,
-        MYPROFILE,
-        SURVEYS,
-        FEEDBACK,
-        ANNOUNCEMENTS,
-        LASTSCANNED,
-        CLASSBONUSES,
-        PEOPLE,
-        REGISTER
-    }
+    public static final int HOMEFRAGMENT = 0;
+    public static final int ATTENDANCEFRAGMENT = 1;
+    public static final int NOTESFRAGMENT = 2;
+    public static final int MYPROFILEFRAGMENT = 3;
+    public static final int SURVEYSFRAGMENT = 4;
+    public static final int FEEDBACKFRAGMENT = 5;
+    public static final int ANNOUNCEMENTSFRAGMENT = 6;
+    public static final int LASTSCANNEDFRAGMENT = 7;
+    public static final int CLASSBONUSESFRAGMENT = 8;
+    public static final int PEOPLEFRAGMENT = 9;
+    public static final int REGISTERFRAGMENT = 10;
+    private String mEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +128,18 @@ public class MainActivity extends ActionBarActivity {
         mNdefPushMessage = new NdefMessage(new NdefRecord[] { newTextRecord(
                 "Message from NFC Reader :-)", Locale.ENGLISH, true) });
 
+
+        // Restore preferences
+        /* Need database to be implemented first because setLoginPerson
+        SharedPreferences settings = getSharedPreferences(PREFS_NAMES, 0);
+        mEmail = settings.getString("email", "");
+
+        if ( mEmail.equals("") ) {
+            Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+            MainActivity.this.startActivity(myIntent);
+        }*/
     }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -173,43 +185,44 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = null;
         Bundle args = new Bundle();
         switch (position) {
-            case 0:
+            case HOMEFRAGMENT:
                 fragment = new HomeFragment();
                 break;
-            case 1:
+            case ATTENDANCEFRAGMENT:
                 fragment = new AttendanceFragment();
                 break;
-            case 2:
+            case NOTESFRAGMENT:
                 fragment = new NotesFragment();
                 break;
-            case 3:
+            case MYPROFILEFRAGMENT:
                 fragment = new ProfileFragment();
                 args.putBoolean("showLastScanned", false);
                 fragment.setArguments(args);
                 break;
-            case 4:
+            case SURVEYSFRAGMENT:
                 Log.e("Surveys", "You still need to implement this");
                 break;
-            case 5:
+            case FEEDBACKFRAGMENT:
                 Log.e("Feedback", "You still need to implement this");
                 break;
-            case 6:
+            case ANNOUNCEMENTSFRAGMENT:
                 fragment = new AnnouncementsFragment();
                 break;
-            case 7:
+            case LASTSCANNEDFRAGMENT:
                 fragment = new ProfileFragment();
                 args.putBoolean("showLastScanned", true);
                 fragment.setArguments(args);
                 break;
-            case 8:
+            case CLASSBONUSESFRAGMENT:
                 Log.e("Class Bonuses", "You still need to implement this");
                 break;
-            case 9:
+            case PEOPLEFRAGMENT:
                 Log.e("People", "You still need to implement this");
                 break;
-            case 10:
+            case REGISTERFRAGMENT:
                 fragment = new RegisterFragment();
                 args.putString("card_id", mTagID);
+                mTagID = "";
                 fragment.setArguments(args);
                 break;
             default:
@@ -388,7 +401,7 @@ public class MainActivity extends ActionBarActivity {
                                     .show();
 
                             mTagID = tagID;
-                            changeFragment(10);
+                            changeFragment(REGISTERFRAGMENT);
                             break;
                         case Checkins.ALREADY_CHECKED_IN:
                             Toast.makeText(getApplicationContext(),

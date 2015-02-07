@@ -197,7 +197,7 @@ public class RegisterFragment extends Fragment {
                 // If the response is JSONObject instead of expected JSONArray
                 Log.i("Link Email Object", result.toString());
                 mainActivity.checkInPerson(cardID);
-                mainActivity.changeFragment(0);
+                mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
             }
 
             @Override
@@ -206,7 +206,7 @@ public class RegisterFragment extends Fragment {
                 try {
                     Log.i("Link Email Array", result.get(0).toString());
                     mainActivity.checkInPerson(cardID);
-                    mainActivity.changeFragment(0);
+                    mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
                 } catch (JSONException e) {
                     // no results, get info
                     getPersonInfo();

@@ -8,6 +8,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.nized.org.api.APIWrapper;
@@ -88,6 +89,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        // Restore preferences
+        /* Need database to be implemented first because setLoginPerson
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAMES, 0);
+        String email = settings.getString("email", "");
+        if ( ! email.equals("") ) {
+            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+            LoginActivity.this.startActivity(myIntent);
+        }
+        */
     }
 
     private void populateAutoComplete() {
@@ -268,6 +279,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             RequestParams requestParams = new RequestParams();
             requestParams.put("email", mEmail);
             requestParams.put("password", mPassword);
+
+            SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAMES, 0);
+            SharedPreferences.Editor editor = settings.edit();
+
+            editor.putString("email", mEmail);
+
+            // Commit the edits!
+            editor.commit();
 
             final CountDownLatch latch = new CountDownLatch(1);
             final boolean[] result = new boolean[1];

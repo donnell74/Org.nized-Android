@@ -9,17 +9,17 @@ import java.util.List;
  * Created by greg on 1/7/15.
  */
 public class Announcements_Roles {
-    private Announcement announcement_id;
+    private int announcement_id;
     @JsonIgnore
     private List<Integer> role_id;
     private Date createdAt;
     private Date updatedAt;
 
-    public Announcement getAnnouncement_id() {
+    public int getAnnouncement_id() {
         return announcement_id;
     }
 
-    public void setAnnouncement_id(Announcement announcement_id) {
+    public void setAnnouncement_id(int announcement_id) {
         this.announcement_id = announcement_id;
     }
 
@@ -54,8 +54,7 @@ public class Announcements_Roles {
 
         Announcements_Roles that = (Announcements_Roles) o;
 
-        if (announcement_id != null ? !announcement_id.equals(that.announcement_id) : that.announcement_id != null)
-            return false;
+        if (announcement_id != that.announcement_id) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null)
             return false;
         if (role_id != null ? !role_id.equals(that.role_id) : that.role_id != null) return false;
@@ -67,7 +66,7 @@ public class Announcements_Roles {
 
     @Override
     public int hashCode() {
-        int result = announcement_id != null ? announcement_id.hashCode() : 0;
+        int result = announcement_id;
         result = 31 * result + (role_id != null ? role_id.hashCode() : 0);
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
