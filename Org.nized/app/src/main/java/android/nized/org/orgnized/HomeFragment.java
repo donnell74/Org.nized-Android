@@ -1,6 +1,10 @@
 package android.nized.org.orgnized;
 
 import android.app.ActionBar;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.nized.org.api.APIUtilities;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
@@ -15,6 +19,7 @@ import android.os.Debug;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,6 +53,14 @@ public class HomeFragment extends Fragment {
     private Person myPerson = null;
     public View home_layout = null;
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            populateView();
+        }
+    };
+
+
     private class MyAPI extends APIUtilities {
 
         @Override
@@ -72,6 +85,10 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        // Register mMessageReceiver to receive messages.
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+                new IntentFilter("updateNotify"));
 
         home_layout = rootView;
         myPerson = APIWrapper.getLoggedInPerson();
@@ -189,6 +206,9 @@ public class HomeFragment extends Fragment {
     private void addAttendances(JSONObject attendance) {
         if ( acquireView() ) {
             try {
+                LinearLayout linearLayout = (LinearLayout) home_layout.findViewById(R.id.attendances);
+                linearLayout.removeAllViews();
+
                 new AddRowTask().execute("Total:   ", String.valueOf(attendance.getInt("total")), R.id.attendances);
                 new AddRowTask().execute("Members: ", String.valueOf(attendance.getInt("member")), R.id.attendances);
                 new AddRowTask().execute("General: ", String.valueOf(attendance.getInt("general")), R.id.attendances);

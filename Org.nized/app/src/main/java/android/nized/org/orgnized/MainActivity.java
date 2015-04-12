@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -77,7 +78,9 @@ public class MainActivity extends ActionBarActivity {
     public static final int CLASSBONUSESFRAGMENT = 8;
     public static final int PEOPLEFRAGMENT = 9;
     public static final int REGISTERFRAGMENT = 10;
+    public static final int PROFILEFRAGMENT = 11;
     private String mEmail = "";
+    private String mTitle = "Org.nized";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mAdapter == null) {
-            showMessage(R.string.error, R.string.no_nfc);
+            //showMessage(R.string.error, R.string.no_nfc);
             finish();
             return;
         }
@@ -182,8 +185,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void changeFragment(int position) {
-        Fragment fragment = null;
         Bundle args = new Bundle();
+        changeFragment(position, args);
+    }
+
+    public void changeFragment(int position, Bundle args) {
+        Fragment fragment = null;
         switch (position) {
             case HOMEFRAGMENT:
                 fragment = new HomeFragment();
@@ -196,7 +203,8 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case MYPROFILEFRAGMENT:
                 fragment = new ProfileFragment();
-                args.putBoolean("showLastScanned", false);
+                args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
+                        (java.io.Serializable) APIWrapper.getLoggedInPerson());
                 fragment.setArguments(args);
                 break;
             case SURVEYSFRAGMENT:
@@ -210,20 +218,26 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case LASTSCANNEDFRAGMENT:
                 fragment = new ProfileFragment();
-                args.putBoolean("showLastScanned", true);
+                args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
+                        (java.io.Serializable) APIWrapper.getLastScannedPerson());
                 fragment.setArguments(args);
                 break;
             case CLASSBONUSESFRAGMENT:
                 Log.e("Class Bonuses", "You still need to implement this");
                 break;
             case PEOPLEFRAGMENT:
-                Log.e("People", "You still need to implement this");
+                fragment = new PeopleFragment();
                 break;
             case REGISTERFRAGMENT:
                 fragment = new RegisterFragment();
                 args.putString("card_id", mTagID);
                 mTagID = "";
                 fragment.setArguments(args);
+                break;
+            case PROFILEFRAGMENT:
+                fragment = new ProfileFragment();
+                fragment.setArguments(args);
+                mTitle = "Profile";
                 break;
             default:
                 fragment = new HomeFragment();
@@ -233,12 +247,17 @@ public class MainActivity extends ActionBarActivity {
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, fragment).commit();
+                    .replace(R.id.content_frame, fragment).addToBackStack("home").commit();
 
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            setTitle(mNavTitles.get(position));
+            if ( position < mNavTitles.size() ) {
+                setTitle(mNavTitles.get(position));
+            } else {
+                setTitle(mTitle);
+            }
+
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             // error in creating fragment
@@ -356,6 +375,10 @@ public class MainActivity extends ActionBarActivity {
                                 " " + thisPerson.getLast_name(),
                         Toast.LENGTH_LONG)
                         .show();
+
+                Intent intent = new Intent("updateNotify");
+                // add data
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
             }
 
             @Override
@@ -371,6 +394,10 @@ public class MainActivity extends ActionBarActivity {
                                    " " + thisPerson.getLast_name(),
                             Toast.LENGTH_LONG)
                             .show();
+
+                    Intent intent = new Intent("updateNotify");
+                    // add data
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),

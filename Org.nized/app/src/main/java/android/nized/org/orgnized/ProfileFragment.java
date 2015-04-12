@@ -8,6 +8,7 @@ import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Person;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,21 @@ import android.widget.TextView;
 
 public class ProfileFragment extends Fragment {
     private View fragmentView = null;
+    private Person mPerson = null;
+    public static final String PERSON_TO_SHOW = "person_to_show";
+
 
     public ProfileFragment(  ) {
 
+    }
+
+    public static ProfileFragment newInstance(Person personToShow) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(PERSON_TO_SHOW, (java.io.Serializable) personToShow);
+        fragment.setArguments(bundle);
+
+        return fragment;
     }
 
     @Override
@@ -27,42 +40,28 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentView = rootView;
 
-        // get arguments
         Bundle args = getArguments();
-        boolean showLastScanned = args.getBoolean("showLastScanned", false);
+        mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
 
-        showProfile(showLastScanned);
+        showProfile();
 
         return rootView;
     }
 
-    private void showProfile(boolean showLastScanned) {
+    private void showProfile() {
         if ( fragmentView == null ) {
             return;
         }
 
-        if (showLastScanned) {
-            // show last scanned
-            Person lastScannedPerson = APIWrapper.getLastScannedPerson();
-            if ( lastScannedPerson == null ) {
-                return;
-            } else {
-                TextView textView = (TextView) fragmentView.findViewById(R.id.name);
-                textView.setText("Hello " + lastScannedPerson.getFirst_name() +
-                        " " + lastScannedPerson.getLast_name());
-            }
+        if (mPerson == null) {
+            //TODO: possibly try to restart here
+            TextView textView = (TextView) fragmentView.findViewById(R.id.name);
+            textView.setText("Unable to load profile.");
         } else {
-            // show currently logged in
-            Person loggedInPerson = APIWrapper.getLoggedInPerson();
-            if (loggedInPerson == null) {
-                //TODO: possibly try to restart here
-                TextView textView = (TextView) fragmentView.findViewById(R.id.name);
-                textView.setText("Unable to load profile.");
-            } else {
-                TextView textView = (TextView) fragmentView.findViewById(R.id.name);
-                textView.setText("Hello " + loggedInPerson.getFirst_name() +
-                        " " + loggedInPerson.getLast_name());
-            }
+            TextView textView = (TextView) fragmentView.findViewById(R.id.name);
+            textView.setText("Hello " + mPerson.getFirst_name() +
+                    " " + mPerson.getLast_name());
+            Log.i("showProfile", mPerson.toString());
         }
     }
 }

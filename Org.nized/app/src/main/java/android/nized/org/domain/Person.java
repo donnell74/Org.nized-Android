@@ -3,12 +3,15 @@ package android.nized.org.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Person {
+public class Person implements Serializable {
 
 	private String email;
 	private String password;
@@ -247,25 +250,6 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", expire_date=" + expire_date +
-                ", mobile_number='" + mobile_number + '\'' +
-                ", is_local_paid=" + is_local_paid +
-                ", is_member=" + is_member +
-                ", class_year=" + class_year +
-                ", last_sync_date=" + last_sync_date +
-                ", checkins=" + checkins +
-                ", class_bonuses=" + class_bonuses +
-                ", roles=" + roles +
-                ", _roles=" + _roles +
-                ", _class_bonuses=" + _class_bonuses +
-                ", _checkins=" + _checkins +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+        return  first_name + ' ' + last_name;
     }
 }

@@ -280,14 +280,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             requestParams.put("email", mEmail);
             requestParams.put("password", mPassword);
 
+            /* used later once local db is implemented
             SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAMES, 0);
             SharedPreferences.Editor editor = settings.edit();
 
             editor.putString("email", mEmail);
 
             // Commit the edits!
-            editor.commit();
+            editor.commit();*/
 
+            Log.i("login", requestParams.toString());
             final CountDownLatch latch = new CountDownLatch(1);
             final boolean[] result = new boolean[1];
             APIWrapper.post(APIWrapper.LOGIN_PERSON, requestParams, new JsonHttpResponseHandler() {
