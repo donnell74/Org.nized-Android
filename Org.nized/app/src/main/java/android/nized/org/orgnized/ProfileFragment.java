@@ -67,7 +67,11 @@ public class ProfileFragment extends Fragment {
 
     private void getUpdatedProfile() {
         RequestParams requestParams = new RequestParams();
-        requestParams.put("email", mPerson.getEmail());
+        if ( mPerson != null ) {
+            requestParams.put("email", mPerson.getEmail());
+        } else {
+            return;
+        }
 
         APIWrapper.get(APIWrapper.FIND_PERSON, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -120,26 +124,26 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
+        update();
+    }
+
+    public void update() {
         if (mPerson == null) {
             //TODO: possibly try to restart here
             TextView textView = (TextView) fragmentView.findViewById(R.id.nameTV);
             textView.setText("Unable to load profile.");
         } else {
-            update();
+            nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
+            nameTv.setText(mPerson.toString());
+
+            emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
+            emailTV.setText(mPerson.getEmail());
+
+            localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
+            localPaidTV.setText(mPerson.getIs_local_paid());
+
+            memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
+            memberTv.setText(mPerson.isIs_member() ? "Is member" : "Is not member");
         }
-    }
-
-    public void update() {
-        nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
-        nameTv.setText(mPerson.toString());
-
-        emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
-        emailTV.setText(mPerson.getEmail());
-
-        localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
-        localPaidTV.setText(mPerson.getIs_local_paid());
-
-        memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
-        memberTv.setText(mPerson.isIs_member() ? "Is member" : "Is not member");
     }
 }
