@@ -1,13 +1,34 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
-    android:layout_height="fill_parent" tools:context="android.nized.org.orgnized.HomeFragment"
-    android:id="@+id/homeframelayout">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="android.nized.org.orgnized.HomeFragment"
+    android:id="@+id/homeframelayout"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_profile_fragment"
-        android:id="@+id/name"/>
+        android:text="@string/blank"
+        android:id="@+id/nameTV"/>
 
-</FrameLayout>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/blank"
+        android:id="@+id/emailTV"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/blank"
+        android:id="@+id/localPaidTV"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/blank"
+        android:id="@+id/memberTV"/>
+
+</LinearLayout>

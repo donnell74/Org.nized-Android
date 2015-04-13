@@ -19,6 +19,7 @@
     <string name="password_label">Password:</string>
     <string name="submit_button">Submit</string>
     <string name="undefined">N/A</string>
+    <string name="blank"></string>
 
     <string-array name="nav_titles_array">
         <item>Home</item>
