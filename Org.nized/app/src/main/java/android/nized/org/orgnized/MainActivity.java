@@ -431,6 +431,10 @@ public class MainActivity extends ActionBarActivity {
                             changeFragment(REGISTERFRAGMENT);
                             break;
                         case Checkins.ALREADY_CHECKED_IN:
+                            Person tempPerson = new Person();
+                            tempPerson.setEmail(response.getString("email"));
+                            APIWrapper.setLastScannedPerson(tempPerson);
+
                             Toast.makeText(getApplicationContext(),
                                     "Person has already checked in today.",
                                     Toast.LENGTH_LONG)
@@ -443,6 +447,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
 
     private long getReversed(byte[] bytes) {
         long result = 0;

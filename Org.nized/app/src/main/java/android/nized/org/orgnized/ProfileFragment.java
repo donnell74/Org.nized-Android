@@ -56,8 +56,10 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         fragmentView = rootView;
 
-        Bundle args = getArguments();
-        mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
+        if ( mPerson == null ) {
+            Bundle args = getArguments();
+            mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
+        }
 
         getUpdatedProfile();
         showProfile();
@@ -80,6 +82,7 @@ public class ProfileFragment extends Fragment {
                 mPerson = (Person) APIWrapper.parseJSONOjbect(
                         checkin,
                         Person.class);
+
                 update();
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Updated Profile",
@@ -94,6 +97,7 @@ public class ProfileFragment extends Fragment {
                     mPerson = (Person) APIWrapper.parseJSONOjbect(
                             all_objs.getJSONObject(0),
                             Person.class);
+
                     update();
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Updated Profile",
@@ -132,6 +136,9 @@ public class ProfileFragment extends Fragment {
             //TODO: possibly try to restart here
             TextView textView = (TextView) fragmentView.findViewById(R.id.nameTV);
             textView.setText("Unable to load profile.");
+        } else if (mPerson.getFirst_name() == null) { // haven't been set yet
+            TextView textView = (TextView) fragmentView.findViewById(R.id.nameTV);
+            textView.setText("Loading profile...");
         } else {
             nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
             nameTv.setText(mPerson.toString());
