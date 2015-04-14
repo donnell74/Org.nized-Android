@@ -43,10 +43,10 @@ public class ProfileFragment extends Fragment {
     private Spinner localPaidSpinner;
     private EditText nameET;
     private CheckBox memberCheckBox;
-    private LinearLayout memberLL;
-    private LinearLayout localPaidLL;
-    private LinearLayout emailLL;
-    private LinearLayout nameLL;
+    private LinearLayout editLL;
+    private LinearLayout viewLL;
+    private EditText mobileET;
+    private TextView mobileTV;
 
 
     public ProfileFragment(  ) {
@@ -99,10 +99,12 @@ public class ProfileFragment extends Fragment {
         emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
         localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
         memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
+        mobileTV = (TextView) fragmentView.findViewById(R.id.mobileTV);
 
         // Edit Views
         nameET = (EditText) fragmentView.findViewById(R.id.nameET);
         emailET = (EditText) fragmentView.findViewById(R.id.emailET);
+        mobileET = (EditText) fragmentView.findViewById(R.id.mobileET);
 
         // Spinners
         localPaidSpinner = (Spinner) fragmentView.findViewById(R.id.localPaidSpinner);
@@ -111,10 +113,8 @@ public class ProfileFragment extends Fragment {
         memberCheckBox = (CheckBox) fragmentView.findViewById(R.id.memberCheckbox);
 
         // Linear Views
-        nameLL = (LinearLayout) fragmentView.findViewById(R.id.nameEditLL);
-        emailLL = (LinearLayout) fragmentView.findViewById(R.id.emailEditLL);
-        localPaidLL = (LinearLayout) fragmentView.findViewById(R.id.localPaidEditLL);
-        memberLL = (LinearLayout) fragmentView.findViewById(R.id.memberEditLL);
+        editLL = (LinearLayout) fragmentView.findViewById(R.id.editLL);
+        viewLL = (LinearLayout) fragmentView.findViewById(R.id.viewLL);
 
         // Buttons
         editBtn = (Button) fragmentView.findViewById(R.id.edit);
@@ -150,6 +150,7 @@ public class ProfileFragment extends Fragment {
                 localPaidSpinner.getSelectedItem().toString().toUpperCase()
         ));
         mPerson.setIs_member(memberCheckBox.isChecked());
+        mPerson.setMobile_number(mobileET.getText().toString());
 
         // save globally
         sendUpdatedProfile(oldEmail);
@@ -219,7 +220,7 @@ public class ProfileFragment extends Fragment {
         int editState;
         int viewState;
 
-        if ( nameTv.getVisibility() == View.VISIBLE ) {
+        if ( viewLL.getVisibility() == View.VISIBLE ) {
             editState = View.VISIBLE;
             viewState = View.GONE;
             updateEditTexts();
@@ -228,19 +229,8 @@ public class ProfileFragment extends Fragment {
             viewState = View.VISIBLE;
         }
 
-        // edit views
-        nameLL.setVisibility(editState);
-        emailLL.setVisibility(editState);
-        localPaidLL.setVisibility(editState);
-        memberLL.setVisibility(editState);
-        saveBtn.setVisibility(editState);
-
-        // view views
-        nameTv.setVisibility(viewState);
-        emailTV.setVisibility(viewState);
-        memberTv.setVisibility(viewState);
-        localPaidTV.setVisibility(viewState);
-        editBtn.setVisibility(viewState);
+        editLL.setVisibility(editState);
+        viewLL.setVisibility(viewState);
     }
 
     private void updateEditTexts() {
@@ -255,6 +245,7 @@ public class ProfileFragment extends Fragment {
 
         nameET.setText(mPerson.toString());
         emailET.setText(mPerson.getEmail());
+        mobileET.setText(mPerson.getMobile_number());
         memberCheckBox.setChecked(mPerson.getIs_member());
     }
 
@@ -336,6 +327,7 @@ public class ProfileFragment extends Fragment {
             emailTV.setText(mPerson.getEmail());
             localPaidTV.setText(mPerson.getIs_local_paid_Str());
             memberTv.setText(mPerson.getIs_member() ? "Is member" : "Is not member");
+            mobileTV.setText(mPerson.getMobile_number());
         }
     }
 }

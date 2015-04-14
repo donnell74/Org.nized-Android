@@ -24,6 +24,7 @@
     <string name="profile_edit_email">Email: </string>
     <string name="profile_edit_ismember">Is Member: </string>
     <string name="profile_edit_localPaid">Is Local Paid: </string>
+    <string name="profile_edit_mobile">Mobile: </string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
 
