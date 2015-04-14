@@ -2,13 +2,14 @@ package android.nized.org.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by greg on 1/7/15.
  */
-public class Announcements_Roles {
+public class Announcements_Roles implements Serializable {
     private int announcement_id;
     @JsonIgnore
     private List<Integer> role_id;

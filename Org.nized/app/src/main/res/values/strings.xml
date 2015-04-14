@@ -20,6 +20,18 @@
     <string name="submit_button">Submit</string>
     <string name="undefined">N/A</string>
     <string name="blank"></string>
+    <string name="profile_edit_name">Name:</string>
+    <string name="profile_edit_email">Email: </string>
+    <string name="profile_edit_ismember">Is Member: </string>
+    <string name="profile_edit_localPaid">Is Local Paid: </string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+
+    <string-array name="localPaid_spinner_options">
+        <item>False</item>
+        <item>Pending</item>
+        <item>True</item>
+    </string-array>
 
     <string-array name="nav_titles_array">
         <item>Home</item>

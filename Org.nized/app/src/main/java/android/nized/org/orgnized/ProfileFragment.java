@@ -4,17 +4,20 @@ package android.nized.org.orgnized;
  * Created by greg on 12/21/14.
  */
 
-import android.content.Intent;
 import android.nized.org.api.APIWrapper;
-import android.nized.org.domain.Checkins;
 import android.nized.org.domain.Person;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,16 @@ public class ProfileFragment extends Fragment {
     private TextView emailTV;
     private TextView localPaidTV;
     private TextView memberTv;
+    private Button editBtn;
+    private Button saveBtn;
+    private EditText emailET;
+    private Spinner localPaidSpinner;
+    private EditText nameET;
+    private CheckBox memberCheckBox;
+    private LinearLayout memberLL;
+    private LinearLayout localPaidLL;
+    private LinearLayout emailLL;
+    private LinearLayout nameLL;
 
 
     public ProfileFragment(  ) {
@@ -61,10 +74,116 @@ public class ProfileFragment extends Fragment {
             mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
         }
 
+        initViewVars();
+        populateSpinner();
+        setOnClickHandlers();
         getUpdatedProfile();
         showProfile();
 
         return rootView;
+    }
+
+    private void populateSpinner() {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.localPaid_spinner_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        localPaidSpinner.setAdapter(adapter);
+    }
+
+    public void initViewVars() {
+        // TextViews
+        nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
+        emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
+        localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
+        memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
+
+        // Edit Views
+        nameET = (EditText) fragmentView.findViewById(R.id.nameET);
+        emailET = (EditText) fragmentView.findViewById(R.id.emailET);
+
+        // Spinners
+        localPaidSpinner = (Spinner) fragmentView.findViewById(R.id.localPaidSpinner);
+
+        // Checkboxes
+        memberCheckBox = (CheckBox) fragmentView.findViewById(R.id.memberCheckbox);
+
+        // Linear Views
+        nameLL = (LinearLayout) fragmentView.findViewById(R.id.nameEditLL);
+        emailLL = (LinearLayout) fragmentView.findViewById(R.id.emailEditLL);
+        localPaidLL = (LinearLayout) fragmentView.findViewById(R.id.localPaidEditLL);
+        memberLL = (LinearLayout) fragmentView.findViewById(R.id.memberEditLL);
+
+        // Buttons
+        editBtn = (Button) fragmentView.findViewById(R.id.edit);
+        saveBtn = (Button) fragmentView.findViewById(R.id.save);
+    }
+
+    private void setOnClickHandlers() {
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleEditView();
+            }
+        });
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                save();
+            }
+        });
+    }
+
+    private void save() {
+        // save
+
+        toggleEditView();
+    }
+
+    private void toggleEditView() {
+        // switch visibilities
+        int editState;
+        int viewState;
+
+        if ( nameTv.getVisibility() == View.VISIBLE ) {
+            editState = View.VISIBLE;
+            viewState = View.GONE;
+            updateEditTexts();
+        } else {
+            editState = View.GONE;
+            viewState = View.VISIBLE;
+        }
+
+        // edit views
+        nameLL.setVisibility(editState);
+        emailLL.setVisibility(editState);
+        localPaidLL.setVisibility(editState);
+        memberLL.setVisibility(editState);
+        saveBtn.setVisibility(editState);
+
+        // view views
+        nameTv.setVisibility(viewState);
+        emailTV.setVisibility(viewState);
+        memberTv.setVisibility(viewState);
+        localPaidTV.setVisibility(viewState);
+        editBtn.setVisibility(viewState);
+    }
+
+    private void updateEditTexts() {
+        String[] localPaidStrings = fragmentView.getResources().getStringArray(R.array.localPaid_spinner_options);
+        String localPaid = mPerson.getIs_local_paid();
+
+        for ( int position = 0; position < localPaidStrings.length; position++ ) {
+            if ( localPaidStrings[position].toUpperCase().equals(localPaid) ) {
+                localPaidSpinner.setSelection(position);
+            }
+        }
+
+        nameET.setText(mPerson.toString());
+        emailET.setText(mPerson.getEmail());
+        memberCheckBox.setChecked(mPerson.getIs_member());
     }
 
     private void getUpdatedProfile() {
@@ -131,6 +250,7 @@ public class ProfileFragment extends Fragment {
         update();
     }
 
+
     public void update() {
         if (mPerson == null) {
             //TODO: possibly try to restart here
@@ -140,17 +260,10 @@ public class ProfileFragment extends Fragment {
             TextView textView = (TextView) fragmentView.findViewById(R.id.nameTV);
             textView.setText("Loading profile...");
         } else {
-            nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
             nameTv.setText(mPerson.toString());
-
-            emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
             emailTV.setText(mPerson.getEmail());
-
-            localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
-            localPaidTV.setText(mPerson.getIs_local_paid());
-
-            memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
-            memberTv.setText(mPerson.isIs_member() ? "Is member" : "Is not member");
+            localPaidTV.setText(mPerson.getIs_local_paid_Str());
+            memberTv.setText(mPerson.getIs_member() ? "Is member" : "Is not member");
         }
     }
 }

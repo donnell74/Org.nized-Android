@@ -3,11 +3,12 @@ package android.nized.org.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
-public class ClassBonus {
+public class ClassBonus implements Serializable {
     private String email;
 	private int class_bonus_id;
 	private String course_code;

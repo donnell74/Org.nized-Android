@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonIgnoreProperties({"roles"})
-public class Survey {
+public class Survey implements Serializable {
 
 	/*
 	 * id creator name start_date end_date questions roles

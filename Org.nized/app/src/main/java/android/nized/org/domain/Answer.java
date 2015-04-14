@@ -3,11 +3,12 @@ package android.nized.org.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 @JsonSerialize
 @JsonDeserialize
-public class Answer {
+public class Answer implements Serializable {
 
 	private int id;
 	private int question_id;

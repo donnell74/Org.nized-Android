@@ -3,11 +3,12 @@ package android.nized.org.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
-public class Note {
+public class Note implements Serializable {
 
 	/*
 	 * id person_email public_to_person title text

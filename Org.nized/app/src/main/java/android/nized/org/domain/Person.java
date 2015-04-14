@@ -88,7 +88,7 @@ public class Person implements Serializable {
         this.mobile_number = mobile_number;
     }
 
-    public String getIs_local_paid() {
+    public String getIs_local_paid_Str() {
         if ( is_local_paid == localPaidEnum.PENDING ) {
             return "Local Dues Pending";
         } else if ( is_local_paid == localPaidEnum.TRUE ) {
@@ -98,11 +98,15 @@ public class Person implements Serializable {
         }
     }
 
+    public String getIs_local_paid() {
+        return String.valueOf(is_local_paid);
+    }
+
     public void setIs_local_paid(localPaidEnum is_local_paid) {
         this.is_local_paid = is_local_paid;
     }
 
-    public boolean isIs_member() {
+    public boolean getIs_member() {
         return is_member;
     }
 
