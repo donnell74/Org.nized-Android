@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by greg on 1/7/15.
  */
-public class Surveys_Roles implements Serializable {
+public class Surveys_Roles implements Serializable  {
     private Survey survey_id;
     private Role role_id;
     private Date createdAt;

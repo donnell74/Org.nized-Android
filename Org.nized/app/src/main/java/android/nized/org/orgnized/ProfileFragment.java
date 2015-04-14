@@ -137,9 +137,81 @@ public class ProfileFragment extends Fragment {
     }
 
     private void save() {
-        // save
+        // gather data and save locally
+        if ( mPerson.setFullName(nameET.getText().toString()) == -1) {
+            Toast.makeText(getActivity(),
+                           "Name field cannot be blank",
+                           Toast.LENGTH_SHORT).show();
+        }
 
+        String oldEmail = mPerson.getEmail();
+        mPerson.setEmail(emailET.getText().toString());
+        mPerson.setIs_local_paid(Person.localPaidEnum.valueOf(
+                localPaidSpinner.getSelectedItem().toString().toUpperCase()
+        ));
+        mPerson.setIs_member(memberCheckBox.isChecked());
+
+        // save globally
+        sendUpdatedProfile(oldEmail);
+
+        update();
         toggleEditView();
+    }
+
+    private void sendUpdatedProfile(String oldEmail) {
+        RequestParams requestParams = new RequestParams();
+        if ( mPerson != null ) {
+            requestParams = mPerson.getUpdateParams();
+        } else {
+            return;
+        }
+
+        String url = APIWrapper.UPDATE_PERSON + oldEmail;
+        APIWrapper.post(url, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
+                // If the response is JSONObject instead of expected JSONArray
+                mPerson = (Person) APIWrapper.parseJSONOjbect(
+                        person,
+                        Person.class);
+
+                update();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Profile saved online",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                // Pull out the first one
+                try {
+                    mPerson = (Person) APIWrapper.parseJSONOjbect(
+                            all_objs.getJSONObject(0),
+                            Person.class);
+
+                    update();
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Profile saved online",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Unable to save data online.",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Unable to save data online.",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 
     private void toggleEditView() {

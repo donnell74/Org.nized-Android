@@ -2,6 +2,7 @@ package android.nized.org.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.loopj.android.http.RequestParams;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -31,6 +32,38 @@ public class Person implements Serializable {
     private List<Date> _checkins;
     private Date createdAt;
     private Date updatedAt;
+
+    public int setFullName(String s) {
+        String[] name_parts = s.split(" ");// split string
+        if ( name_parts.length == 1 && name_parts[0].trim().equals("") ) {
+            return -1;
+        }
+
+        first_name = name_parts[0];
+
+        if ( name_parts.length == 2 ) {
+            last_name = name_parts[1];
+        }
+
+        return 0;
+    }
+
+    public String getFullName() {
+        return this.toString();
+    }
+
+    public RequestParams getUpdateParams() {
+        RequestParams updateParams = new RequestParams();
+        updateParams.put("email", email);
+        updateParams.put("first_name", first_name);
+        updateParams.put("last_name", last_name);
+        updateParams.put("mobile_number", mobile_number);
+        updateParams.put("is_local_paid", is_local_paid);
+        updateParams.put("is_member", is_member);
+        updateParams.put("class_year", class_year);
+
+        return updateParams;
+    }
 
     public enum classYearEnum {
         FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
