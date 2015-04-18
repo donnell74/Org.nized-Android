@@ -44,6 +44,46 @@
             android:text="@string/blank"
             android:id="@+id/mobileTV"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/classBonusMenu"
+            >
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/minusClassBonus"
+                android:text="@string/minus"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/toggleClassBonuses"
+                android:text="@string/hide"
+                android:layout_weight="7"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/plusClassBonus"
+                android:text="@string/plus"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/classBonuses"
+            android:paddingBottom="10dp"
+            />
+
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

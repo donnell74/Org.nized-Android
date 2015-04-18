@@ -27,6 +27,10 @@
     <string name="profile_edit_mobile">Mobile: </string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
 
     <string-array name="localPaid_spinner_options">
         <item>False</item>

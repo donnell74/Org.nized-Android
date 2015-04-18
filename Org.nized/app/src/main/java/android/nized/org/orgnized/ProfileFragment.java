@@ -5,6 +5,7 @@ package android.nized.org.orgnized;
  */
 
 import android.nized.org.api.APIWrapper;
+import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,11 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +34,9 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileFragment extends Fragment {
     private View fragmentView = null;
@@ -47,6 +56,10 @@ public class ProfileFragment extends Fragment {
     private LinearLayout viewLL;
     private EditText mobileET;
     private TextView mobileTV;
+    private Button plusClassBonusBtn;
+    private Button toggleClassBonusBtn;
+    private Button minusClassBonusBtn;
+    private ListView classBonuses;
 
 
     public ProfileFragment(  ) {
@@ -76,11 +89,21 @@ public class ProfileFragment extends Fragment {
 
         initViewVars();
         populateSpinner();
+        populateLists();
         setOnClickHandlers();
         getUpdatedProfile();
         showProfile();
 
         return rootView;
+    }
+
+    private void populateLists() {
+        // Construct the data source
+        List<ClassBonus> classBonusArrayList = mPerson.get_class_bonuses();
+        // Create the adapter to convert the array to views
+        ArrayAdapter<ClassBonus> adapter = (ArrayAdapter) new ClassBonusesAdapter(getActivity(), classBonusArrayList);
+        // Attach the adapter to a ListView
+        classBonuses.setAdapter(adapter);
     }
 
     private void populateSpinner() {
@@ -119,6 +142,12 @@ public class ProfileFragment extends Fragment {
         // Buttons
         editBtn = (Button) fragmentView.findViewById(R.id.edit);
         saveBtn = (Button) fragmentView.findViewById(R.id.save);
+        plusClassBonusBtn = (Button) fragmentView.findViewById(R.id.plusClassBonus);
+        minusClassBonusBtn = (Button) fragmentView.findViewById(R.id.minusClassBonus);
+        toggleClassBonusBtn = (Button) fragmentView.findViewById(R.id.toggleClassBonuses);
+
+        // List Views
+        classBonuses = (ListView) fragmentView.findViewById(R.id.classBonuses);
     }
 
     private void setOnClickHandlers() {
@@ -134,6 +163,52 @@ public class ProfileFragment extends Fragment {
                 save();
             }
         });
+        plusClassBonusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addClassBonus();
+            }
+        });
+        minusClassBonusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeClassBonus();
+            }
+        });
+        toggleClassBonusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleClassBonuses();
+            }
+        });
+        classBonuses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                ClassBonus classBonus = (ClassBonus) classBonuses.getAdapter().getItem(position);
+                classBonuses.getAdapter();
+
+                Log.i("",classBonus.toString());
+            }
+        });
+    }
+
+    private void removeClassBonus() {
+
+    }
+
+    private void addClassBonus() {
+
+    }
+
+    private void toggleClassBonuses() {
+        if ( classBonuses.getVisibility() == View.VISIBLE) {
+            classBonuses.setVisibility(View.GONE);
+            toggleClassBonusBtn.setText(R.string.show);
+        } else {
+            classBonuses.setVisibility(View.VISIBLE);
+            toggleClassBonusBtn.setText(R.string.hide);
+        }
     }
 
     private void save() {
@@ -328,6 +403,8 @@ public class ProfileFragment extends Fragment {
             localPaidTV.setText(mPerson.getIs_local_paid_Str());
             memberTv.setText(mPerson.getIs_member() ? "Is member" : "Is not member");
             mobileTV.setText(mPerson.getMobile_number());
+
+            populateLists();
         }
     }
 }

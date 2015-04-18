@@ -120,11 +120,11 @@ public class MainActivity extends ActionBarActivity {
         mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null).create();
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mAdapter == null) {
+        /*if (mAdapter == null) {
             //showMessage(R.string.error, R.string.no_nfc);
             finish();
             return;
-        }
+        }*/
 
         mPendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
