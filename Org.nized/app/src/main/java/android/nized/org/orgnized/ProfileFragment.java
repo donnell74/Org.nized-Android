@@ -4,6 +4,7 @@ package android.nized.org.orgnized;
  * Created by greg on 12/21/14.
  */
 
+import android.graphics.drawable.ColorDrawable;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
@@ -22,11 +23,15 @@ import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -60,7 +65,7 @@ public class ProfileFragment extends Fragment {
     private Button toggleClassBonusBtn;
     private Button minusClassBonusBtn;
     private ListView classBonuses;
-
+    private ArrayList<ClassBonus> selectedClassBonuses = new ArrayList<ClassBonus>();
 
     public ProfileFragment(  ) {
 
@@ -102,8 +107,10 @@ public class ProfileFragment extends Fragment {
         List<ClassBonus> classBonusArrayList = mPerson.get_class_bonuses();
         // Create the adapter to convert the array to views
         ArrayAdapter<ClassBonus> adapter = (ArrayAdapter) new ClassBonusesAdapter(getActivity(), classBonusArrayList);
-        // Attach the adapter to a ListView
-        classBonuses.setAdapter(adapter);
+        if (classBonuses.getAdapter() == null) {
+            // Attach the adapter to a ListView0
+            classBonuses.setAdapter(adapter);
+        }
     }
 
     private void populateSpinner() {
@@ -185,16 +192,36 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                ClassBonus classBonus = (ClassBonus) classBonuses.getAdapter().getItem(position);
-                classBonuses.getAdapter();
-
-                Log.i("",classBonus.toString());
+                classBonusesOnClick(view, position);
             }
         });
     }
 
-    private void removeClassBonus() {
+    private void classBonusesOnClick(View view, int position) {
+        ClassBonus classBonus = (ClassBonus) classBonuses.getAdapter().getItem(position);
+        ColorDrawable colorDrawable = (ColorDrawable) view.getBackground();
 
+        int selectedColor = getResources().getColor(R.color.background_material_dark);
+        if ( colorDrawable.getColor() == selectedColor ) {
+            selectedClassBonuses.remove(classBonus);
+            view.setBackgroundColor(getResources().getColor(R.color.background_material_light));
+        } else {
+            selectedClassBonuses.add(classBonus);
+            view.setBackgroundColor(selectedColor);
+        }
+    }
+
+    private void removeClassBonus() {
+        ClassBonusesAdapter classBonusesAdapter = (ClassBonusesAdapter) classBonuses.getAdapter();
+        List<Integer> idsToDelete = new ArrayList<Integer>();
+        for ( ClassBonus eachBonus : selectedClassBonuses) {
+            classBonusesAdapter.remove(eachBonus);
+            idsToDelete.add(eachBonus.getClass_bonus_id());
+        }
+
+        classBonusesAdapter.notifyDataSetChanged();
+        deleteClassBonuses(idsToDelete);
+        selectedClassBonuses.clear();
     }
 
     private void addClassBonus() {
@@ -290,6 +317,42 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    public void deleteClassBonuses(List<Integer> idsToDelete) {
+        RequestParams requestParams = new RequestParams();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = null;
+        try {
+            json = ow.writeValueAsString(idsToDelete);
+            requestParams.put("class_bonus_ids", json);
+            Log.i("requestParams", requestParams.toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        APIWrapper.post(APIWrapper.DELETE_PERSON_CLASS_BONUSES, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Class bonuses deleted",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Unable to delete class bonuses",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+
+
+        });
+    }
+
     private void toggleEditView() {
         // switch visibilities
         int editState;
@@ -334,10 +397,10 @@ public class ProfileFragment extends Fragment {
 
         APIWrapper.get(APIWrapper.FIND_PERSON, requestParams, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject checkin) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
                 // If the response is JSONObject instead of expected JSONArray
                 mPerson = (Person) APIWrapper.parseJSONOjbect(
-                        checkin,
+                        person,
                         Person.class);
 
                 update();
@@ -403,7 +466,6 @@ public class ProfileFragment extends Fragment {
             localPaidTV.setText(mPerson.getIs_local_paid_Str());
             memberTv.setText(mPerson.getIs_member() ? "Is member" : "Is not member");
             mobileTV.setText(mPerson.getMobile_number());
-
             populateLists();
         }
     }

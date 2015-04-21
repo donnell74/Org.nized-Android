@@ -1,5 +1,10 @@
 package android.nized.org.domain;
 
+import android.util.Log;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.loopj.android.http.RequestParams;
@@ -64,6 +69,7 @@ public class Person implements Serializable {
 
         return updateParams;
     }
+
 
     public enum classYearEnum {
         FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
@@ -294,5 +300,28 @@ public class Person implements Serializable {
     @Override
     public String toString() {
         return  first_name + ' ' + last_name;
+    }
+
+    public String toStringAll() {
+        return "Person{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", first_name='" + first_name + '\'' +
+                ", last_name='" + last_name + '\'' +
+                ", expire_date=" + expire_date +
+                ", mobile_number='" + mobile_number + '\'' +
+                ", is_local_paid=" + is_local_paid +
+                ", is_member=" + is_member +
+                ", class_year=" + class_year +
+                ", last_sync_date=" + last_sync_date +
+                ", checkins=" + checkins +
+                ", class_bonuses=" + class_bonuses +
+                ", roles=" + roles +
+                ", _roles=" + _roles +
+                ", _class_bonuses=" + _class_bonuses +
+                ", _checkins=" + _checkins +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

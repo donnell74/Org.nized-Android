@@ -43,6 +43,7 @@ public class APIWrapper {
     public static final String FIND_CHECKINS = "checkins/find/";
     public static final String GET_TODAYS_ATTENDANCE = "checkins/gettodaysattendance";
     public static final String GET_PERSON_BY_CLASS_BONUS = "classbonus/getpersonbyclassbonus/";
+    public static final String DELETE_PERSON_CLASS_BONUSES = "person_classbonus/delete/";
     public static final String FIND_CARD_ID_TO_EMAIL = "cardidtoemail/find/";
     public static final String FIND_OR_CREATE_CARD_ID_TO_EMAIL = "cardidtoemail/findOrCreate/";
     public static final String CREATE_CARD_ID_TO_EMAIL = "cardidtoemail/create/";

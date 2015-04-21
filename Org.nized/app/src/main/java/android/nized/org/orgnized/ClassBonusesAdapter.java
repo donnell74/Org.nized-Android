@@ -51,7 +51,13 @@ public class ClassBonusesAdapter extends ArrayAdapter<ClassBonus> {
         // Populate the data into the template view using the data object
         viewHolder.classCode.setText(child.getCourse_code());
         viewHolder.semester.setText(child.getSemester());
+
+        convertView.setBackgroundColor(convertView.getResources().getColor(R.color.background_material_light));
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    public void remove(ClassBonus classBonus) {
+        classbonuses.remove(classBonus);
     }
 }
