@@ -2,6 +2,8 @@ package android.nized.org.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.android.gms.games.internal.constants.RequestStatus;
+import com.loopj.android.http.RequestParams;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -120,4 +122,19 @@ public class ClassBonus implements Serializable {
 				+ "]";
 	}
 
+    public RequestParams getPersonRequestParams() {
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("class_bonus_id", class_bonus_id);
+        requestParams.put("email", email);
+
+        return requestParams;
+    }
+
+    public RequestParams getRequestParams() {
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("course_code", course_code);
+        requestParams.put("semester", semester);
+
+        return requestParams;
+    }
 }

@@ -12,6 +12,7 @@ import com.loopj.android.http.RequestParams;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -202,7 +203,7 @@ public class Person implements Serializable {
     }
 
     public List<ClassBonus> get_class_bonuses() {
-        return _class_bonuses;
+        return (_class_bonuses == null) ? new ArrayList<ClassBonus>() : _class_bonuses;
     }
 
     public void set_class_bonuses(List<ClassBonus> _class_bonuses) {

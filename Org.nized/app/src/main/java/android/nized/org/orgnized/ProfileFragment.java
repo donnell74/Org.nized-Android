@@ -9,21 +9,18 @@ import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +44,7 @@ public class ProfileFragment extends Fragment {
     private View fragmentView = null;
     private Person mPerson = null;
     public static final String PERSON_TO_SHOW = "person_to_show";
+    public static String currEmail = "";
     private TextView nameTv;
     private TextView emailTV;
     private TextView localPaidTV;
@@ -66,6 +64,8 @@ public class ProfileFragment extends Fragment {
     private Button minusClassBonusBtn;
     private ListView classBonuses;
     private ArrayList<ClassBonus> selectedClassBonuses = new ArrayList<ClassBonus>();
+    private List<ClassBonus> mClassBonusArrayList;
+    private ArrayAdapter classBonusArrayAdapter;
 
     public ProfileFragment(  ) {
 
@@ -92,6 +92,11 @@ public class ProfileFragment extends Fragment {
             mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
         }
 
+        // check again to see if mPerson is set yet
+        if ( mPerson != null ) {
+            ProfileFragment.currEmail = mPerson.getEmail();
+        }
+
         initViewVars();
         populateSpinner();
         populateLists();
@@ -103,14 +108,16 @@ public class ProfileFragment extends Fragment {
     }
 
     private void populateLists() {
-        // Construct the data source
-        List<ClassBonus> classBonusArrayList = mPerson.get_class_bonuses();
-        // Create the adapter to convert the array to views
-        ArrayAdapter<ClassBonus> adapter = (ArrayAdapter) new ClassBonusesAdapter(getActivity(), classBonusArrayList);
-        if (classBonuses.getAdapter() == null) {
-            // Attach the adapter to a ListView0
-            classBonuses.setAdapter(adapter);
+        if ( mPerson == null ) {
+            return;
         }
+
+        // Construct the data source
+        mClassBonusArrayList = mPerson.get_class_bonuses();
+        // Create the adapter to convert the array to views
+        classBonusArrayAdapter = (ArrayAdapter) new ClassBonusesAdapter(getActivity(), mClassBonusArrayList);
+        // Attach the adapter to a ListView0
+        classBonuses.setAdapter(classBonusArrayAdapter);
     }
 
     private void populateSpinner() {
@@ -123,7 +130,7 @@ public class ProfileFragment extends Fragment {
         localPaidSpinner.setAdapter(adapter);
     }
 
-    public void initViewVars() {
+    private void initViewVars() {
         // TextViews
         nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
         emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
@@ -212,6 +219,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void removeClassBonus() {
+        if ( mPerson == null ) {
+            return;
+        }
+
         ClassBonusesAdapter classBonusesAdapter = (ClassBonusesAdapter) classBonuses.getAdapter();
         List<Integer> idsToDelete = new ArrayList<Integer>();
         for ( ClassBonus eachBonus : selectedClassBonuses) {
@@ -225,7 +236,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void addClassBonus() {
+        if ( mPerson == null ) {
+            return;
+        }
 
+        ClassBonusDialogFragment classBonusDialogFragment = new ClassBonusDialogFragment();
+
+        classBonusDialogFragment.show(getFragmentManager(), "classBonus");
     }
 
     private void toggleClassBonuses() {
@@ -387,7 +404,7 @@ public class ProfileFragment extends Fragment {
         memberCheckBox.setChecked(mPerson.getIs_member());
     }
 
-    private void getUpdatedProfile() {
+    public void getUpdatedProfile() {
         RequestParams requestParams = new RequestParams();
         if ( mPerson != null ) {
             requestParams.put("email", mPerson.getEmail());
@@ -402,6 +419,7 @@ public class ProfileFragment extends Fragment {
                 mPerson = (Person) APIWrapper.parseJSONOjbect(
                         person,
                         Person.class);
+                ProfileFragment.currEmail = mPerson.getEmail();
 
                 update();
                 Toast.makeText(getActivity().getApplicationContext(),
@@ -417,6 +435,7 @@ public class ProfileFragment extends Fragment {
                     mPerson = (Person) APIWrapper.parseJSONOjbect(
                             all_objs.getJSONObject(0),
                             Person.class);
+                    ProfileFragment.currEmail = mPerson.getEmail();
 
                     update();
                     Toast.makeText(getActivity().getApplicationContext(),
@@ -451,7 +470,6 @@ public class ProfileFragment extends Fragment {
         update();
     }
 
-
     public void update() {
         if (mPerson == null) {
             //TODO: possibly try to restart here
@@ -469,4 +487,5 @@ public class ProfileFragment extends Fragment {
             populateLists();
         }
     }
+
 }

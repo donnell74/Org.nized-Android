@@ -18,6 +18,7 @@
     <string name="email_label">Email:</string>
     <string name="password_label">Password:</string>
     <string name="submit_button">Submit</string>
+    <string name="cancel">Cancel</string>
     <string name="undefined">N/A</string>
     <string name="blank"></string>
     <string name="profile_edit_name">Name:</string>
@@ -31,6 +32,16 @@
     <string name="minus">-</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
+    <string name="classBonus">Class Bonus</string>
+
+    <string-array name="semesters">
+        <item>FA15</item>
+        <item>SP16</item>
+        <item>FA16</item>
+        <item>SP17</item>
+        <item>FA17</item>
+        <item>SP18</item>
+    </string-array>
 
     <string-array name="localPaid_spinner_options">
         <item>False</item>

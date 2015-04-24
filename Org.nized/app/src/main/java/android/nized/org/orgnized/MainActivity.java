@@ -11,9 +11,11 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Checkins;
+import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,6 +33,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -48,7 +53,8 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+        implements ClassBonusDialogFragment.NoticeDialogListener{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -247,7 +253,7 @@ public class MainActivity extends ActionBarActivity {
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, fragment).addToBackStack("home").commit();
+                    .replace(R.id.content_frame, fragment, "current").addToBackStack("home").commit();
 
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
@@ -464,5 +470,100 @@ public class MainActivity extends ActionBarActivity {
     public void onNewIntent(Intent intent) {
         setIntent(intent);
         resolveIntent(intent);
+    }
+
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, ClassBonus classBonus) {
+        // submit data
+        Log.i("Submit", "Class Bonus Dialog: " + classBonus.toString());
+
+        sendClassBonus(classBonus);
+    }
+
+    private void sendPersonClassBonus(ClassBonus classBonus) {
+        RequestParams requestParams = classBonus.getPersonRequestParams();
+        final ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("current");
+
+        APIWrapper.post(APIWrapper.CREATE_PERSON_CLASS_BONUSES, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                Toast.makeText(getApplicationContext(),
+                        "Class bonus created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getApplicationContext(),
+                        "Class bonus created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to delete class bonuses",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+    }
+
+    private void sendClassBonus(final ClassBonus classBonus) {
+        RequestParams requestParams = classBonus.getRequestParams();
+
+        APIWrapper.post(APIWrapper.CREATE_CLASS_BONUSES, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                try {
+                    object.put("class_bonus_id", object.get("id"));
+                    object.remove("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                ClassBonus newClassBonus = (ClassBonus) APIWrapper.parseJSONOjbect(
+                        object,
+                        ClassBonus.class);
+                newClassBonus.setEmail(classBonus.getEmail());
+
+                sendPersonClassBonus(newClassBonus);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                try {
+                    JSONObject object = all_objs.getJSONObject(0);
+                    object.put("class_bonus_id", object.get("id"));
+                    object.remove("id");
+
+                    ClassBonus newClassBonus = (ClassBonus) APIWrapper.parseJSONOjbect(
+                            object,
+                            ClassBonus.class);
+                    newClassBonus.setEmail(classBonus.getEmail());
+
+                    sendPersonClassBonus(newClassBonus);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to create class bonuses",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 }
