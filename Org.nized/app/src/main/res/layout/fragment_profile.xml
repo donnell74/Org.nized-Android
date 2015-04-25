@@ -63,7 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/toggleClassBonuses"
-                android:text="@string/hide"
+                android:text="@string/show"
                 android:layout_weight="7"
                 />
 
@@ -82,6 +82,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/classBonuses"
             android:paddingBottom="10dp"
+            android:visibility="gone"
             />
 
         <Button
