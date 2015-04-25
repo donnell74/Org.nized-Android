@@ -42,15 +42,15 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
     private View fragmentView = null;
-    private Person mPerson = null;
+    public static Person mPerson = null;
     public static final String PERSON_TO_SHOW = "person_to_show";
-    public static String currEmail = "";
     private TextView nameTv;
     private TextView emailTV;
     private TextView localPaidTV;
     private TextView memberTv;
     private Button editBtn;
     private Button saveBtn;
+    private Button changePasswordBtn;
     private EditText emailET;
     private Spinner localPaidSpinner;
     private EditText nameET;
@@ -90,11 +90,6 @@ public class ProfileFragment extends Fragment {
         if ( mPerson == null ) {
             Bundle args = getArguments();
             mPerson = (Person) args.getSerializable(PERSON_TO_SHOW);
-        }
-
-        // check again to see if mPerson is set yet
-        if ( mPerson != null ) {
-            ProfileFragment.currEmail = mPerson.getEmail();
         }
 
         initViewVars();
@@ -156,6 +151,7 @@ public class ProfileFragment extends Fragment {
         // Buttons
         editBtn = (Button) fragmentView.findViewById(R.id.edit);
         saveBtn = (Button) fragmentView.findViewById(R.id.save);
+        changePasswordBtn = (Button) fragmentView.findViewById(R.id.changePassword);
         plusClassBonusBtn = (Button) fragmentView.findViewById(R.id.plusClassBonus);
         minusClassBonusBtn = (Button) fragmentView.findViewById(R.id.minusClassBonus);
         toggleClassBonusBtn = (Button) fragmentView.findViewById(R.id.toggleClassBonuses);
@@ -200,6 +196,18 @@ public class ProfileFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 classBonusesOnClick(view, position);
+            }
+        });
+        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ( mPerson == null ) {
+                    return;
+                }
+
+                ChangePasswordDialogFragment changePasswordDialogFragment = new ChangePasswordDialogFragment();
+
+                changePasswordDialogFragment.show(getFragmentManager(), "changePassword");
             }
         });
     }
@@ -419,7 +427,6 @@ public class ProfileFragment extends Fragment {
                 mPerson = (Person) APIWrapper.parseJSONOjbect(
                         person,
                         Person.class);
-                ProfileFragment.currEmail = mPerson.getEmail();
 
                 update();
                 Toast.makeText(getActivity().getApplicationContext(),
@@ -435,7 +442,6 @@ public class ProfileFragment extends Fragment {
                     mPerson = (Person) APIWrapper.parseJSONOjbect(
                             all_objs.getJSONObject(0),
                             Person.class);
-                    ProfileFragment.currEmail = mPerson.getEmail();
 
                     update();
                     Toast.makeText(getActivity().getApplicationContext(),

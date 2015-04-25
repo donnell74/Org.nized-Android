@@ -92,6 +92,14 @@
             android:text="@string/edit"
             />
 
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:id="@+id/changePassword"
+            android:text="@string/changePassword"
+            />
+
     </LinearLayout>
 
     <LinearLayout

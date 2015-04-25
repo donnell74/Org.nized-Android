@@ -63,6 +63,7 @@ public class APIWrapper {
     public static final String FIND_OR_CREATE_PERSON = "person/findOrCreate/";
     public static final String CREATE_PERSON_CLASS_BONUSES = "person_classbonus/createIfNotExists/";
     public static final String CREATE_CLASS_BONUSES = "classbonus/createIfNotExists/";
+    public static final String CHANGE_PASSWORD = "person/changePassword/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();

@@ -61,7 +61,7 @@ public class ClassBonusDialogFragment extends DialogFragment {
                         ClassBonus classBonus = new ClassBonus();
                         classBonus.setCourseCode(classBonusStr);
                         classBonus.setSemester(spinnerStr);
-                        classBonus.setEmail(ProfileFragment.currEmail);
+                        classBonus.setEmail(ProfileFragment.mPerson.getEmail());
                         mListener.onDialogPositiveClick(ClassBonusDialogFragment.this, classBonus);
                     }
                 })

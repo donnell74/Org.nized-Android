@@ -33,6 +33,10 @@
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="classBonus">Class Bonus</string>
+    <string name="changePassword">Change Password</string>
+    <string name="prevPassword">Old Password</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmPassword">Confirm Password</string>
 
     <string-array name="semesters">
         <item>FA15</item>
@@ -75,5 +79,7 @@
     <string name="first_name_label">First Name</string>
     <string name="last_name_label">Last Name</string>
     <string name="create_person">Create Person</string>
+    <string name="settings_pwd_equal">Confirm password is the same</string>
+    <string name="settings_pwd_not_equal">Confirm password is different</string>
 
 </resources>

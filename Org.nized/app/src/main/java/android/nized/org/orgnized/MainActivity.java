@@ -54,7 +54,8 @@ import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity
-        implements ClassBonusDialogFragment.NoticeDialogListener{
+        implements ClassBonusDialogFragment.NoticeDialogListener,
+                   ChangePasswordDialogFragment.NoticeDialogListener{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -179,6 +180,11 @@ public class MainActivity extends ActionBarActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Log.i("changePassword", "");
     }
 
 
