@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -224,7 +225,7 @@ public class MainActivity extends ActionBarActivity
                 Log.e("Surveys", "You still need to implement this");
                 break;
             case FEEDBACKFRAGMENT:
-                Log.e("Feedback", "You still need to implement this");
+                sendEmail();
                 break;
             case ANNOUNCEMENTSFRAGMENT:
                 fragment = new AnnouncementsFragment();
@@ -278,7 +279,27 @@ public class MainActivity extends ActionBarActivity
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             // error in creating fragment
-            Log.e("MainActivity", "Error in creating fragment");
+            Log.e("MainActivity", "Error in creating fragment or sending email");
+        }
+    }
+
+    private void sendEmail() {
+        String[] TO = {"reorconsultants@gmail.com"};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Org.nized Feedback");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            finish();
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this,
+                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
         }
     }
 
