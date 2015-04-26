@@ -39,6 +39,8 @@
     <string name="confirmPassword">Confirm Password</string>
 
     <string-array name="semesters">
+        <item>FA14</item>
+        <item>SP15</item>
         <item>FA15</item>
         <item>SP16</item>
         <item>FA16</item>

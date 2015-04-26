@@ -35,7 +35,7 @@ public class Person implements Serializable {
 	private List<android.nized.org.domain.Role> roles;
     private List<String> _roles;
     private List<android.nized.org.domain.ClassBonus> _class_bonuses;
-    private List<Date> _checkins;
+    private List<String> _checkins;
     private Date createdAt;
     private Date updatedAt;
 
@@ -210,11 +210,11 @@ public class Person implements Serializable {
         this._class_bonuses = _class_bonuses;
     }
 
-    public List<Date> get_checkins() {
+    public List<String> get_checkins() {
         return _checkins;
     }
 
-    public void set_checkins(List<Date> _checkins) {
+    public void set_checkins(List<String> _checkins) {
         this._checkins = _checkins;
     }
 

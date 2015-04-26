@@ -215,6 +215,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case MYPROFILEFRAGMENT:
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLoggedInPerson());
                 fragment.setArguments(args);
@@ -230,6 +231,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case LASTSCANNEDFRAGMENT:
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLastScannedPerson());
                 fragment.setArguments(args);
@@ -239,6 +241,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case PEOPLEFRAGMENT:
                 fragment = new PeopleFragment();
+                fragment.setArguments(args);
                 break;
             case REGISTERFRAGMENT:
                 fragment = new RegisterFragment();
@@ -248,6 +251,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case PROFILEFRAGMENT:
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
                 fragment.setArguments(args);
                 mTitle = "Profile";
                 break;

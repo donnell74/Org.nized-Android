@@ -64,6 +64,7 @@ public class APIWrapper {
     public static final String CREATE_PERSON_CLASS_BONUSES = "person_classbonus/createIfNotExists/";
     public static final String CREATE_CLASS_BONUSES = "classbonus/createIfNotExists/";
     public static final String CHANGE_PASSWORD = "person/changePassword/";
+    public static final String GET_ALL_CHECKIN_DATES = "checkins/GetAllCheckinDates/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
