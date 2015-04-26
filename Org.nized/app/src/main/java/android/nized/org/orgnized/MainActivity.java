@@ -237,7 +237,8 @@ public class MainActivity extends ActionBarActivity
                 fragment.setArguments(args);
                 break;
             case CLASSBONUSESFRAGMENT:
-                Log.e("Class Bonuses", "You still need to implement this");
+                fragment = new ClassBonusFragment();
+                fragment.setArguments(args);
                 break;
             case PEOPLEFRAGMENT:
                 fragment = new PeopleFragment();

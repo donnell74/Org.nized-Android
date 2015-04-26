@@ -47,6 +47,9 @@ public class PeopleFragment extends Fragment {
     ArrayList<Person> peopleList = new ArrayList<Person>();
     ListView listView = null;
     private String mDate = null;
+    private String mCourseCode = null;
+    private String mSemester = null;
+    private String mUrl = APIWrapper.FIND_PERSON;
 
     public PeopleFragment() {
         // Required empty public constructor
@@ -73,14 +76,23 @@ public class PeopleFragment extends Fragment {
         names.add("Loading...");
 
         Bundle args = getArguments();
+        RequestParams requestParams = new RequestParams();
         if ( args != null ) {
+            mCourseCode = args.getString("course_code");
+            mSemester = args.getString("semester");
+            if ( mCourseCode != null ) {
+                mUrl = APIWrapper.GET_PERSON_BY_CLASS_BONUS;
+                requestParams.put("course_code", mCourseCode);
+                requestParams.put("semester", mSemester);
+            }
+
             mDate = args.getString("date");
             if ( mDate != null ) {
                 mDate = mDate.split("T")[0];
             }
         }
 
-        APIWrapper.get(APIWrapper.FIND_PERSON, null, new JsonHttpResponseHandler() {
+        APIWrapper.get(mUrl, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, final JSONArray people) {
                 names = new ArrayList();
@@ -125,14 +137,19 @@ public class PeopleFragment extends Fragment {
             for (int i = 0; i < people.length(); i++) {
                 Person thisPerson = null;
                 try {
-                    thisPerson = (Person) APIWrapper.parseJSONOjbect((JSONObject) people.getJSONObject(i), Person.class);
-                    if ( thisPerson.get_checkins() != null ) {
-                        if ( mDate == null ) {
-                            names.add(thisPerson.toString());
-                            peopleList.add(thisPerson);
-                            continue;
-                        }
+                    JSONObject objToParse = (JSONObject) people.getJSONObject(i);
+                    if ( mCourseCode != null ) {
+                        objToParse = objToParse.getJSONObject("email");
+                    }
 
+                    thisPerson = (Person) APIWrapper.parseJSONOjbect(objToParse, Person.class);
+                    if ( mDate == null ) {
+                        names.add(thisPerson.toString());
+                        peopleList.add(thisPerson);
+                        continue;
+                    }
+
+                    if ( thisPerson.get_checkins() != null ) {
                         for (String eachDateStr : thisPerson.get_checkins()) {
                             if ( eachDateStr.split("T")[0].equals(mDate) ) {
                                 names.add(thisPerson.toString());

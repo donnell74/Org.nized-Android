@@ -42,7 +42,7 @@ public class APIWrapper {
     public static final String GET_TOTAL_CHECKINS_BY_DATE = "checkins/gettotalcheckinsbydate/";
     public static final String FIND_CHECKINS = "checkins/find/";
     public static final String GET_TODAYS_ATTENDANCE = "checkins/gettodaysattendance";
-    public static final String GET_PERSON_BY_CLASS_BONUS = "classbonus/getpersonbyclassbonus/";
+    public static final String GET_PERSON_BY_CLASS_BONUS = "classbonus/getpersonsbyclassbonus/";
     public static final String DELETE_PERSON_CLASS_BONUSES = "person_classbonus/delete/";
     public static final String FIND_CARD_ID_TO_EMAIL = "cardidtoemail/find/";
     public static final String FIND_OR_CREATE_CARD_ID_TO_EMAIL = "cardidtoemail/findOrCreate/";
@@ -65,6 +65,7 @@ public class APIWrapper {
     public static final String CREATE_CLASS_BONUSES = "classbonus/createIfNotExists/";
     public static final String CHANGE_PASSWORD = "person/changePassword/";
     public static final String GET_ALL_CHECKIN_DATES = "checkins/GetAllCheckinDates/";
+    public static final String FIND_CLASS_BONUSES = "classbonus/find/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();

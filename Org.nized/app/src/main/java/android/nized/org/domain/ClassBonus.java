@@ -1,5 +1,7 @@
 package android.nized.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.android.gms.games.internal.constants.RequestStatus;
@@ -10,6 +12,7 @@ import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClassBonus implements Serializable {
     private String email;
 	private int class_bonus_id;
@@ -118,8 +121,7 @@ public class ClassBonus implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ClassBonus [id=" + class_bonus_id + ", courseCode=" + course_code + ", semester=" + semester
-				+ "]";
+		return course_code + ", " + semester;
 	}
 
     public RequestParams getPersonRequestParams() {
