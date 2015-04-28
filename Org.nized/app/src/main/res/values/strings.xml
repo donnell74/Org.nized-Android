@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Org.nized</string>
+    <string name="org_name">MoState AITP</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_close">close drawer</string>
@@ -37,6 +38,10 @@
     <string name="prevPassword">Old Password</string>
     <string name="newPassword">New Password</string>
     <string name="confirmPassword">Confirm Password</string>
+    <string name="general">General</string>
+    <string name="total">Total</string>
+    <string name="member">Members</string>
+    <string name="zero">0</string>
 
     <string-array name="semesters">
         <item>FA14</item>

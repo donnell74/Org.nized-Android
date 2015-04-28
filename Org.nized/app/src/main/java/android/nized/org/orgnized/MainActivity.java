@@ -3,8 +3,9 @@ package android.nized.org.orgnized;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -34,9 +35,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -95,6 +93,14 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         APIWrapper.mContext = this;
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+        BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),
+                R.drawable.banner));
+
+        actionBar.setBackgroundDrawable(background);
+
 
         mNavTitles = new ArrayList<String>(Arrays.asList( getResources().getStringArray(R.array.nav_titles_array) ));
 
