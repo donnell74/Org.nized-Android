@@ -374,7 +374,10 @@ public class ProfileFragment extends Fragment {
                         .show();
             }
 
-
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject jsonObject) {
+                Log.i("Failure", String.valueOf(statusCode));
+            }
         });
     }
 

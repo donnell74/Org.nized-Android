@@ -3,6 +3,7 @@ package android.nized.org.orgnized;
 
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**

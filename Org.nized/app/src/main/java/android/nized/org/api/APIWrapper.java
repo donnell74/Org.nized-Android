@@ -1,5 +1,8 @@
 package android.nized.org.api;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.nized.org.domain.Person;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -17,6 +20,7 @@ import com.loopj.android.http.SyncHttpClient;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -75,12 +79,35 @@ public class APIWrapper {
     public static Person loggedInPerson = null;
     public static Person lastScannedPerson = null;
 
+    // App Context
+    public static Context mContext = null;
+
+    public static boolean isOnline() {
+        if (mContext != null) {
+            ConnectivityManager cm =
+                    (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnected();
+        } else {
+            Log.e("apiwrapper", "mContext needs to be set for isOnline");
+            return false;
+        }
+    }
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        getClient().get(getAbsoluteUrl(url), params, responseHandler);
+        if ( isOnline() ) {
+            getClient().get(getAbsoluteUrl(url), params, responseHandler);
+        } else {
+            Log.e("APIWrapper get", "not online, need to implement save request");
+        }
     }
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        getClient().post(getAbsoluteUrl(url), params, responseHandler);
+        if ( isOnline() ) {
+            getClient().post(getAbsoluteUrl(url), params, responseHandler);
+        } else {
+            Log.e("APIWrapper post", "not online, need to implement save request");
+        }
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
