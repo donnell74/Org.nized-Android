@@ -300,13 +300,13 @@ public class RegisterFragment extends Fragment {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.w("Create Person Fail String", responseString);
+                    Log.w("Create Person Fail", responseString);
                 }
 
                 @Override
                 public void onFailure(int statusCode, org.apache.http.Header[] headers, java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
                     if (errorResponse != null) {
-                        Log.i("Create Person Fail Object", errorResponse.toString());
+                        Log.i("Create Person Fail", errorResponse.toString());
                     }
                 }
             });
