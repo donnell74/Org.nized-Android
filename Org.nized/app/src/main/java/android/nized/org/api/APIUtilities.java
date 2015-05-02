@@ -40,8 +40,6 @@ public abstract class APIUtilities {
                     public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
                         // Pull out the first one
                         try {
-                            Log.i("getForAllRoles", "array for " + objClass.toString());
-                            Log.i("getForAllRoles", "array: " + all_objs.toString());
                             for (int i = 0; i < all_objs.length(); i++) {
                                 addToView(all_objs.getJSONObject(i), objClass);
                             }
@@ -52,7 +50,6 @@ public abstract class APIUtilities {
 
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        Log.i("getForAllRoles", "string");
                         JsonFactory jsonFactory = new JsonFactory();
                         try {
                             addToView(new JSONObject(responseString.replaceAll("\n", "\\n")), objClass);

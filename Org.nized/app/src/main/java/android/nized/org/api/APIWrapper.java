@@ -70,6 +70,9 @@ public class APIWrapper {
     public static final String CHANGE_PASSWORD = "person/changePassword/";
     public static final String GET_ALL_CHECKIN_DATES = "checkins/GetAllCheckinDates/";
     public static final String FIND_CLASS_BONUSES = "classbonus/find/";
+    public static final String DELETE_PERSON_ROLE = "person_role/destroy/";
+    public static final String FIND_ROLES = "roles/find/";
+    public static final String CREATE_PERSON_ROLE = "person_role/create/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();

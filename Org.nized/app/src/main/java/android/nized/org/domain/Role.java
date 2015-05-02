@@ -2,6 +2,7 @@ package android.nized.org.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.loopj.android.http.RequestParams;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -108,4 +109,11 @@ public class Role implements Serializable {
 		return "Role [role_id=" + id + ", name=" + name + "]";
 	}
 
+	public RequestParams getPersonRequestParams() {
+		RequestParams requestParams = new RequestParams();
+		requestParams.put("role_id", id);
+		requestParams.put("email", email);
+
+		return requestParams;
+	}
 }

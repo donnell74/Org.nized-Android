@@ -2,6 +2,7 @@ package android.nized.org.orgnized;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Checkins;
 import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
@@ -35,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -54,7 +57,8 @@ import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity
         implements ClassBonusDialogFragment.NoticeDialogListener,
-                   ChangePasswordDialogFragment.NoticeDialogListener{
+                   ChangePasswordDialogFragment.NoticeDialogListener,
+                   RolesDialogFragment.NoticeDialogListener {
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -145,7 +149,6 @@ public class MainActivity extends ActionBarActivity
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         mNdefPushMessage = new NdefMessage(new NdefRecord[] { newTextRecord(
                 "Message from NFC Reader :-)", Locale.ENGLISH, true) });
-
 
         // Restore preferences
         /* Need database to be implemented first because setLoginPerson
@@ -436,7 +439,7 @@ public class MainActivity extends ActionBarActivity
                     APIWrapper.setLastScannedPerson(thisPerson);
                     Toast.makeText(getApplicationContext(),
                             "Scanned " + thisPerson.getFirst_name() +
-                                   " " + thisPerson.getLast_name(),
+                                    " " + thisPerson.getLast_name(),
                             Toast.LENGTH_LONG)
                             .show();
 
@@ -511,6 +514,48 @@ public class MainActivity extends ActionBarActivity
         resolveIntent(intent);
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, Role role) {
+        Log.i("role submit", "Role dialog: " + role.toString());
+
+        sendRole(role);
+    }
+
+    private void sendRole(Role role) {
+        RequestParams requestParams = role.getPersonRequestParams();
+        final ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("current");
+
+        APIWrapper.post(APIWrapper.CREATE_PERSON_ROLE, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                Toast.makeText(getApplicationContext(),
+                        "Person role created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getApplicationContext(),
+                        "Person role created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to delete person role",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+    }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, ClassBonus classBonus) {

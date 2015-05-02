@@ -2,6 +2,9 @@ package android.nized.org.domain;
 
 import android.util.Log;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -18,26 +21,41 @@ import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Person implements Serializable {
-
+@Table(name = "Persons")
+public class Person extends Model implements Serializable {
+    @Column(name = "email", index = true)
 	private String email;
+    @Column(name = "password")
 	private String password;
+    @Column(name = "first_name")
 	private String first_name;
+    @Column(name = "last_name")
 	private String last_name;
+    @Column(name = "expire_date")
 	private Date expire_date;
+    @Column(name = "mobile_number")
 	private String mobile_number;
+    @Column(name = "is_local_paid")
 	private localPaidEnum is_local_paid;
+    @Column(name = "is_member")
 	private boolean is_member;
 	private classYearEnum class_year;
+    @Column(name = "last_sync_date")
 	private Date last_sync_date;
 	private List<Checkins> checkins;
-	private List<android.nized.org.domain.ClassBonus> class_bonuses;
-	private List<android.nized.org.domain.Role> roles;
+	private List<ClassBonus> class_bonuses;
+	private List<Role> roles;
     private List<String> _roles;
-    private List<android.nized.org.domain.ClassBonus> _class_bonuses;
+    private List<ClassBonus> _class_bonuses;
     private List<String> _checkins;
+    @Column(name = "createdAt")
     private Date createdAt;
+    @Column(name = "updatedAt")
     private Date updatedAt;
+
+    public Person() {
+        super();
+    }
 
     public int setFullName(String s) {
         String[] name_parts = s.split(" ");// split string

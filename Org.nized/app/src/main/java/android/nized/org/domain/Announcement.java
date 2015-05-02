@@ -1,5 +1,9 @@
 package android.nized.org.domain;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -9,26 +13,29 @@ import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Announcement implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "Announcements")
+public class Announcement
+        extends Model
+        implements Serializable {
 
-	private int id;
+    @Column(name = "email")
     private String email;
+    @Column(name = "creator")
 	private String creator; // email of person who created it is what's passed
+    @Column(name = "title")
 	private String title;
+    @Column(name = "text")
 	private String text;
+    @Column(name = "start_date")
 	private Date start_date;
+    @Column(name = "end_date")
 	private Date end_date;
 	private List<Announcements_Roles> roles;
+    @Column(name = "createdAt")
     private Date createdAt;
+    @Column(name = "updatedAt")
     private Date updatedAt;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
     public String getEmail() {
         return email;
@@ -109,7 +116,6 @@ public class Announcement implements Serializable {
 
         Announcement that = (Announcement) o;
 
-        if (id != that.id) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null)
             return false;
         if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
@@ -129,7 +135,7 @@ public class Announcement implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = 1;
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (creator != null ? creator.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
@@ -145,8 +151,7 @@ public class Announcement implements Serializable {
     @Override
     public String toString() {
         return "Announcement{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
                 ", creator='" + creator + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +

@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
@@ -66,6 +68,13 @@ public class ProfileFragment extends Fragment {
     private ArrayList<ClassBonus> selectedClassBonuses = new ArrayList<ClassBonus>();
     private List<ClassBonus> mClassBonusArrayList;
     private ArrayAdapter classBonusArrayAdapter;
+    private List<String> mRolesArrayList;
+    private ArrayAdapter mRolesArrayAdapter;
+    private ListView rolesListView;
+    private Button toggleRoleBtn;
+    private Button minusRoleBtn;
+    private Button plusRoleBtn;
+    private ArrayList<Integer> selectedRoles = new ArrayList<>();
 
     public ProfileFragment(  ) {
 
@@ -113,6 +122,14 @@ public class ProfileFragment extends Fragment {
         classBonusArrayAdapter = (ArrayAdapter) new ClassBonusesAdapter(getActivity(), mClassBonusArrayList);
         // Attach the adapter to a ListView0
         classBonuses.setAdapter(classBonusArrayAdapter);
+
+        mRolesArrayList = mPerson.get_roles();
+        if ( mRolesArrayList == null ) {
+            mRolesArrayList = new ArrayList<>();
+        }
+
+        mRolesArrayAdapter = (ArrayAdapter) new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mRolesArrayList);
+        rolesListView.setAdapter(mRolesArrayAdapter);
     }
 
     private void populateSpinner() {
@@ -155,9 +172,13 @@ public class ProfileFragment extends Fragment {
         plusClassBonusBtn = (Button) fragmentView.findViewById(R.id.plusClassBonus);
         minusClassBonusBtn = (Button) fragmentView.findViewById(R.id.minusClassBonus);
         toggleClassBonusBtn = (Button) fragmentView.findViewById(R.id.toggleClassBonuses);
+        plusRoleBtn = (Button) fragmentView.findViewById(R.id.plusRole);
+        minusRoleBtn = (Button) fragmentView.findViewById(R.id.minusRole);
+        toggleRoleBtn = (Button) fragmentView.findViewById(R.id.toggleRoles);
 
         // List Views
         classBonuses = (ListView) fragmentView.findViewById(R.id.classBonuses);
+        rolesListView = (ListView) fragmentView.findViewById(R.id.roles);
     }
 
     private void setOnClickHandlers() {
@@ -198,6 +219,31 @@ public class ProfileFragment extends Fragment {
                 classBonusesOnClick(view, position);
             }
         });
+        plusRoleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRole();
+            }
+        });
+        minusRoleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeRole();
+            }
+        });
+        toggleRoleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleRoles();
+            }
+        });
+        rolesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                rolesOnClick(view, position);
+            }
+        });
+
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,6 +256,101 @@ public class ProfileFragment extends Fragment {
                 changePasswordDialogFragment.show(getFragmentManager(), "changePassword");
             }
         });
+    }
+
+    private void rolesOnClick(View view, int position) {
+        Role role = mPerson.getRoles().get(position);
+        ColorDrawable colorDrawable = (ColorDrawable) view.getBackground();
+        if ( colorDrawable == null ) {
+            view.setBackgroundColor(view.getResources().getColor(R.color.background_material_light));
+            colorDrawable = (ColorDrawable) view.getBackground();
+        }
+
+        int selectedColor = getResources().getColor(R.color.background_material_dark);
+        if ( colorDrawable.getColor() == selectedColor ) {
+            selectedRoles.remove(position);
+            view.setBackgroundColor(getResources().getColor(R.color.background_material_light));
+        } else {
+            view.setBackgroundColor(selectedColor);
+            selectedRoles.add(position);
+        }
+    }
+
+    private void toggleRoles() {
+        if ( rolesListView.getVisibility() == View.VISIBLE) {
+            rolesListView.setVisibility(View.GONE);
+            toggleRoleBtn.setText(R.string.show);
+        } else {
+            rolesListView.setVisibility(View.VISIBLE);
+            toggleRoleBtn.setText(R.string.hide);
+        }
+    }
+
+    private void removeRole() {
+        if ( mPerson == null ) {
+            return;
+        }
+
+        List<Integer> idsToDelete = new ArrayList<Integer>();
+        for ( Integer eachPos : selectedRoles) {
+            idsToDelete.add(mPerson.getRoles().get(eachPos).getId());
+        }
+
+        deleteRoles(idsToDelete);
+        selectedRoles.clear();
+    }
+
+    private void deleteRoles(List<Integer> idsToDelete) {
+        RequestParams requestParams = new RequestParams();
+        for ( Integer eachId : idsToDelete ) {
+            requestParams.put("id", eachId);
+        }
+
+        APIWrapper.post(APIWrapper.DELETE_PERSON_ROLE, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject obj) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Roles deleted",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                getUpdatedProfile();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Roles deleted",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                getUpdatedProfile();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Unable to delete roles",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject jsonObject) {
+                Log.i("Failure", String.valueOf(statusCode));
+            }
+        });
+    }
+
+    private void addRole() {
+        if ( mPerson == null ) {
+            return;
+        }
+
+        RolesDialogFragment rolesDialogFragment = new RolesDialogFragment();
+
+        rolesDialogFragment.show(getFragmentManager(), "roles");
     }
 
     private void classBonusesOnClick(View view, int position) {

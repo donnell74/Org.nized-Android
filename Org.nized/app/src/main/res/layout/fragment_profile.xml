@@ -85,6 +85,47 @@
             android:visibility="gone"
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/roleMenu"
+            >
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/minusRole"
+                android:text="@string/minus"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/toggleRoles"
+                android:text="@string/show"
+                android:layout_weight="7"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/plusRole"
+                android:text="@string/plus"
+                android:layout_weight="1"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/roles"
+            android:paddingBottom="10dp"
+            android:visibility="gone"
+            />
+
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
