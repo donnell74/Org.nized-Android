@@ -63,7 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/toggleClassBonuses"
-                android:text="@string/show"
+                android:text="@string/showClassBonuses"
                 android:layout_weight="7"
                 />
 
@@ -104,7 +104,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/toggleRoles"
-                android:text="@string/show"
+                android:text="@string/showRoles"
                 android:layout_weight="7"
                 />
 

@@ -279,10 +279,10 @@ public class ProfileFragment extends Fragment {
     private void toggleRoles() {
         if ( rolesListView.getVisibility() == View.VISIBLE) {
             rolesListView.setVisibility(View.GONE);
-            toggleRoleBtn.setText(R.string.show);
+            toggleRoleBtn.setText(R.string.showRoles);
         } else {
             rolesListView.setVisibility(View.VISIBLE);
-            toggleRoleBtn.setText(R.string.hide);
+            toggleRoleBtn.setText(R.string.hideRoles);
         }
     }
 
@@ -397,10 +397,10 @@ public class ProfileFragment extends Fragment {
     private void toggleClassBonuses() {
         if ( classBonuses.getVisibility() == View.VISIBLE) {
             classBonuses.setVisibility(View.GONE);
-            toggleClassBonusBtn.setText(R.string.show);
+            toggleClassBonusBtn.setText(R.string.showClassBonuses);
         } else {
             classBonuses.setVisibility(View.VISIBLE);
-            toggleClassBonusBtn.setText(R.string.hide);
+            toggleClassBonusBtn.setText(R.string.hideClassBonuses);
         }
     }
 

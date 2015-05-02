@@ -33,6 +33,10 @@
     <string name="minus">-</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
+    <string name="showClassBonuses">Show Class Bonuses</string>
+    <string name="hideClassBonuses">Hide Class Bonuses</string>
+    <string name="showRoles">Show Roles</string>
+    <string name="hideRoles">Hide Roles</string>
     <string name="classBonus">Class Bonus</string>
     <string name="changePassword">Change Password</string>
     <string name="prevPassword">Old Password</string>
