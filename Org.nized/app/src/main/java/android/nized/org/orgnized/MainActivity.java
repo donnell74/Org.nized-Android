@@ -225,6 +225,7 @@ public class MainActivity extends ActionBarActivity
         Fragment fragment = null;
         switch (position) {
             case HOMEFRAGMENT:
+                // parts of home fragment will be blocked
                 fragment = new HomeFragment();
                 break;
             case ATTENDANCEFRAGMENT:
@@ -236,9 +237,11 @@ public class MainActivity extends ActionBarActivity
                 fragment = new AttendanceFragment();
                 break;
             case NOTESFRAGMENT:
+                // permissions on per note bias
                 fragment = new NotesFragment();
                 break;
             case MYPROFILEFRAGMENT:
+                // parts of profile will be blocked
                 fragment = new ProfileFragment();
                 ProfileFragment.mPerson = null;
                 ProfileFragment.isLoggedInPerson = true;
@@ -247,15 +250,22 @@ public class MainActivity extends ActionBarActivity
                 fragment.setArguments(args);
                 break;
             case SURVEYSFRAGMENT:
+                // permissions on per survey bias
                 Log.e("Surveys", "You still need to implement this");
                 break;
             case FEEDBACKFRAGMENT:
                 sendEmail();
                 break;
             case ANNOUNCEMENTSFRAGMENT:
+                // permissions on per announcement bias
                 fragment = new AnnouncementsFragment();
                 break;
             case LASTSCANNEDFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new ProfileFragment();
                 ProfileFragment.mPerson = null;
                 ProfileFragment.isLoggedInPerson = false;
@@ -264,20 +274,40 @@ public class MainActivity extends ActionBarActivity
                 fragment.setArguments(args);
                 break;
             case CLASSBONUSESFRAGMENT:
+                if ( ! APIWrapper.getPermission("classbonuses").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new ClassBonusFragment();
                 fragment.setArguments(args);
                 break;
             case PEOPLEFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new PeopleFragment();
                 fragment.setArguments(args);
                 break;
             case REGISTERFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new RegisterFragment();
                 args.putString("card_id", mTagID);
                 mTagID = "";
                 fragment.setArguments(args);
                 break;
             case PROFILEFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new ProfileFragment();
                 ProfileFragment.mPerson = null;
                 fragment.setArguments(args);
