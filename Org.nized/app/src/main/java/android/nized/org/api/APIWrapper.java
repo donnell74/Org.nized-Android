@@ -3,10 +3,15 @@ package android.nized.org.api;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.nized.org.domain.ClassBonus;
+import android.nized.org.domain.Permission;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.text.BoringLayout;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,13 +19,19 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -73,6 +84,7 @@ public class APIWrapper {
     public static final String DELETE_PERSON_ROLE = "person_role/destroy/";
     public static final String FIND_ROLES = "roles/find/";
     public static final String CREATE_PERSON_ROLE = "person_role/create/";
+    public static final String FIND_PERMISSIONS = "permissions/find/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
@@ -84,6 +96,7 @@ public class APIWrapper {
 
     // App Context
     public static Context mContext = null;
+    private static ArrayList<Permission> permissions = new ArrayList<>();
 
     public static boolean isOnline() {
         if (mContext != null) {
@@ -216,5 +229,44 @@ public class APIWrapper {
     }
 
 
+    public static void getPermissions() {
+        final List<Permission> permissions = new ArrayList<>();
 
+        String url = APIWrapper.FIND_PERMISSIONS + "?";
+        for ( Role eachRole : loggedInPerson.getRoles()) {
+            url += "role_id=" + eachRole.getRole_id() + "&";
+        }
+
+        APIWrapper.post(url, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                for ( int i = 0; i < all_objs.length(); i++ ) {
+                    try {
+                        Permission eachPerm = (Permission) parseJSONOjbect(all_objs.getJSONObject(i), Permission.class);
+                        boolean havePerm = false;
+                        for ( Permission currPerm : APIWrapper.permissions ) {
+                            if (currPerm.getModel().equals(eachPerm.getModel())) {
+                                havePerm = true;
+
+                                // make final perm true if ever hit a true
+                                currPerm.setSelf(currPerm.getSelf() || eachPerm.getSelf());
+                                currPerm.setOther(currPerm.getOther() || eachPerm.getOther());
+                            }
+                        }
+
+                        if ( ! havePerm ) {
+                            APIWrapper.permissions.add(eachPerm);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+            }
+        });
+    }
 }

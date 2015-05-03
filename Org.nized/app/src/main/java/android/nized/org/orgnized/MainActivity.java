@@ -159,6 +159,8 @@ public class MainActivity extends ActionBarActivity
             Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
             MainActivity.this.startActivity(myIntent);
         }*/
+
+        APIWrapper.getPermissions();
     }
 
 
