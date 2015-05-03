@@ -209,6 +209,13 @@ public class MainActivity extends ActionBarActivity
 
     }
 
+    public void denyToast() {
+        Toast.makeText(getApplicationContext(),
+                "You do not have access to this feature",
+                Toast.LENGTH_SHORT)
+                .show();
+    }
+
     public void changeFragment(int position) {
         Bundle args = new Bundle();
         changeFragment(position, args);
@@ -221,6 +228,11 @@ public class MainActivity extends ActionBarActivity
                 fragment = new HomeFragment();
                 break;
             case ATTENDANCEFRAGMENT:
+                if ( ! APIWrapper.getPermission("checkins").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new AttendanceFragment();
                 break;
             case NOTESFRAGMENT:
@@ -229,6 +241,7 @@ public class MainActivity extends ActionBarActivity
             case MYPROFILEFRAGMENT:
                 fragment = new ProfileFragment();
                 ProfileFragment.mPerson = null;
+                ProfileFragment.isLoggedInPerson = true;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLoggedInPerson());
                 fragment.setArguments(args);
@@ -245,6 +258,7 @@ public class MainActivity extends ActionBarActivity
             case LASTSCANNEDFRAGMENT:
                 fragment = new ProfileFragment();
                 ProfileFragment.mPerson = null;
+                ProfileFragment.isLoggedInPerson = false;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLastScannedPerson());
                 fragment.setArguments(args);

@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
+    public static boolean isLoggedInPerson;
     private View fragmentView = null;
     public static Person mPerson = null;
     public static final String PERSON_TO_SHOW = "person_to_show";
@@ -505,7 +506,6 @@ public class ProfileFragment extends Fragment {
             }
 
 
-
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.i(String.valueOf(statusCode), responseString);
@@ -577,6 +577,11 @@ public class ProfileFragment extends Fragment {
                         "Updated Profile",
                         Toast.LENGTH_SHORT)
                         .show();
+
+                if ( isLoggedInPerson ) {
+                    APIWrapper.setLoggedInPerson(mPerson);
+                    APIWrapper.getPermissions();
+                }
             }
 
             @Override
@@ -592,6 +597,11 @@ public class ProfileFragment extends Fragment {
                             "Updated Profile",
                             Toast.LENGTH_SHORT)
                             .show();
+
+                    if ( isLoggedInPerson ) {
+                        APIWrapper.setLoggedInPerson(mPerson);
+                        APIWrapper.getPermissions();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getActivity().getApplicationContext(),

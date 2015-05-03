@@ -228,18 +228,32 @@ public class APIWrapper {
         APIWrapper.lastScannedPerson = lastScannedPerson;
     }
 
+    public static Permission getPermission(String model) {
+        for ( Permission eachPerm : APIWrapper.permissions ) {
+            if ( model.equals(eachPerm.getModel()) ) {
+                return eachPerm;
+            }
+        }
+
+        Permission defaultPerm = new Permission();
+        defaultPerm.setOther(false);
+        defaultPerm.setSelf(false);
+        defaultPerm.setModel(model);
+
+        return defaultPerm;
+    }
 
     public static void getPermissions() {
-        final List<Permission> permissions = new ArrayList<>();
-
         String url = APIWrapper.FIND_PERMISSIONS + "?";
         for ( Role eachRole : loggedInPerson.getRoles()) {
             url += "role_id=" + eachRole.getRole_id() + "&";
         }
 
+        Log.i("url", url);
         APIWrapper.post(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                permissions.clear();
                 for ( int i = 0; i < all_objs.length(); i++ ) {
                     try {
                         Permission eachPerm = (Permission) parseJSONOjbect(all_objs.getJSONObject(i), Permission.class);
@@ -260,6 +274,10 @@ public class APIWrapper {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+
+                for ( Permission eachPerm : permissions ) {
+                    Log.i("eachPerm", eachPerm.toString());
                 }
             }
 
