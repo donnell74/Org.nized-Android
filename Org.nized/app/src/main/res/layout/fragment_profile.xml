@@ -1,265 +1,290 @@
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     tools:context="android.nized.org.orgnized.HomeFragment"
-    android:id="@+id/homeframelayout"
-    android:orientation="vertical">
+    android:fillViewport="true"
+    >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/homeframelayout"
         android:orientation="vertical"
-        android:id="@+id/viewLL"
         >
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:id="@+id/nameTV"/>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:id="@+id/emailTV"/>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:id="@+id/localPaidTV"/>
-
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:id="@+id/memberTV"/>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:id="@+id/mobileTV"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/classBonusMenu"
+            android:orientation="vertical"
+            android:id="@+id/viewLL"
             >
-
-            <Button
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/minusClassBonus"
-                android:text="@string/minus"
-                android:layout_weight="1"
+                android:text="@string/blank"
+                android:id="@+id/nameTV"
+                android:textSize="35sp"
+                android:gravity="center"
+                android:textColor="@color/maroon"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/blank"
+                android:id="@+id/emailTV"
+                android:textSize="20sp"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/blank"
+                android:id="@+id/mobileTV"
+                android:textSize="20sp"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/blank"
+                android:id="@+id/localPaidTV"
+                android:textSize="20sp"
+                android:gravity="center"
+                />
+
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/blank"
+                android:id="@+id/memberTV"
+                android:textSize="20sp"
+                android:gravity="center"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/classBonusMenu"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/minusClassBonus"
+                    android:text="@string/minus"
+                    android:layout_weight="1"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/toggleClassBonuses"
+                    android:text="@string/showClassBonuses"
+                    android:layout_weight="7"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plusClassBonus"
+                    android:text="@string/plus"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="100dp"
+                android:id="@+id/classBonuses"
+                android:paddingBottom="10dp"
+                android:visibility="gone"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/roleMenu"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/minusRole"
+                    android:text="@string/minus"
+                    android:layout_weight="1"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/toggleRoles"
+                    android:text="@string/showRoles"
+                    android:layout_weight="7"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/plusRole"
+                    android:text="@string/plus"
+                    android:layout_weight="1"
+                    />
+
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="100dp"
+                android:id="@+id/roles"
+                android:paddingBottom="10dp"
+                android:visibility="gone"
+                android:gravity="center"
                 />
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/toggleClassBonuses"
-                android:text="@string/showClassBonuses"
-                android:layout_weight="7"
+                android:paddingTop="10dp"
+                android:id="@+id/edit"
+                android:text="@string/edit"
                 />
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/plusClassBonus"
-                android:text="@string/plus"
-                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:id="@+id/changePassword"
+                android:text="@string/changePassword"
                 />
 
         </LinearLayout>
-
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/classBonuses"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/roleMenu"
+            android:orientation="vertical"
+            android:id="@+id/editLL"
+            android:visibility="gone"
             >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/nameEditLL"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_name"
+                    android:id="@+id/nameEditTV"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nameET"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/emailEditLL"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_email"
+                    android:id="@+id/emailEditTV"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/emailET"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/localPaidEditLL"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_localPaid"
+                    android:id="@+id/localPaidEditTV"
+                    />
+
+                <Spinner
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/localPaidSpinner"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/memberEditLL"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_ismember"
+                    android:id="@+id/memberEditTV"
+                    />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/memberCheckbox"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/mobileEditLL"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_edit_mobile"
+                    android:id="@+id/mobileEditTV"
+                    />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mobileET"
+                    />
+
+            </LinearLayout>
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/minusRole"
-                android:text="@string/minus"
-                android:layout_weight="1"
-                />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/toggleRoles"
-                android:text="@string/showRoles"
-                android:layout_weight="7"
-                />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/plusRole"
-                android:text="@string/plus"
-                android:layout_weight="1"
+                android:id="@+id/save"
+                android:text="@string/save"
                 />
 
         </LinearLayout>
-
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/roles"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
-            />
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:id="@+id/edit"
-            android:text="@string/edit"
-            />
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:id="@+id/changePassword"
-            android:text="@string/changePassword"
-            />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/editLL"
-        android:visibility="gone"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/nameEditLL"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_edit_name"
-                android:id="@+id/nameEditTV"
-                />
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/nameET"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/emailEditLL"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_edit_email"
-                android:id="@+id/emailEditTV"
-                />
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/emailET"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/localPaidEditLL"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_edit_localPaid"
-                android:id="@+id/localPaidEditTV"
-                />
-
-            <Spinner
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/localPaidSpinner"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/memberEditLL"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_edit_ismember"
-                android:id="@+id/memberEditTV"
-                />
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/memberCheckbox"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/mobileEditLL"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_edit_mobile"
-                android:id="@+id/mobileEditTV"
-                />
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/mobileET"
-                />
-
-        </LinearLayout>
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/save"
-            android:text="@string/save"
-            />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

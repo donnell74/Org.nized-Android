@@ -7,6 +7,7 @@ package android.nized.org.orgnized;
 import android.graphics.drawable.ColorDrawable;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.ClassBonus;
+import android.nized.org.domain.Permission;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Role;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +78,10 @@ public class ProfileFragment extends Fragment {
     private Button minusRoleBtn;
     private Button plusRoleBtn;
     private ArrayList<Integer> selectedRoles = new ArrayList<>();
+    private LinearLayout roleMenu;
+    private Permission personPermission;
+    private TextView localPaidEditTV;
+    private TextView memberEditTv;
 
     public ProfileFragment(  ) {
 
@@ -106,10 +112,23 @@ public class ProfileFragment extends Fragment {
         populateSpinner();
         populateLists();
         setOnClickHandlers();
+        hideBasedOnPermissions();
         getUpdatedProfile();
         showProfile();
 
         return rootView;
+    }
+
+    private void hideBasedOnPermissions() {
+        personPermission = APIWrapper.getPermission("person");
+        if ( isLoggedInPerson ) { // in rare chance you can edit others and not self
+            // (model person -> self)
+            if (!personPermission.getOther()) {
+                roleMenu.setVisibility(View.GONE);
+            }
+        }
+
+        // other shouldn't happen because it can not be reached
     }
 
     private void populateLists() {
@@ -148,7 +167,9 @@ public class ProfileFragment extends Fragment {
         nameTv = (TextView) fragmentView.findViewById(R.id.nameTV);
         emailTV = (TextView) fragmentView.findViewById(R.id.emailTV);
         localPaidTV = (TextView) fragmentView.findViewById(R.id.localPaidTV);
+        localPaidEditTV = (TextView) fragmentView.findViewById(R.id.localPaidEditTV);
         memberTv = (TextView) fragmentView.findViewById(R.id.memberTV);
+        memberEditTv = (TextView) fragmentView.findViewById(R.id.memberEditTV);
         mobileTV = (TextView) fragmentView.findViewById(R.id.mobileTV);
 
         // Edit Views
@@ -165,6 +186,7 @@ public class ProfileFragment extends Fragment {
         // Linear Views
         editLL = (LinearLayout) fragmentView.findViewById(R.id.editLL);
         viewLL = (LinearLayout) fragmentView.findViewById(R.id.viewLL);
+        roleMenu = (LinearLayout) fragmentView.findViewById(R.id.roleMenu);
 
         // Buttons
         editBtn = (Button) fragmentView.findViewById(R.id.edit);
@@ -415,10 +437,12 @@ public class ProfileFragment extends Fragment {
 
         String oldEmail = mPerson.getEmail();
         mPerson.setEmail(emailET.getText().toString());
-        mPerson.setIs_local_paid(Person.localPaidEnum.valueOf(
-                localPaidSpinner.getSelectedItem().toString().toUpperCase()
-        ));
-        mPerson.setIs_member(memberCheckBox.isChecked());
+        if ( personPermission.getOther() ) {
+            mPerson.setIs_local_paid(Person.localPaidEnum.valueOf(
+                    localPaidSpinner.getSelectedItem().toString().toUpperCase()
+            ));
+            mPerson.setIs_member(memberCheckBox.isChecked());
+        }
         mPerson.setMobile_number(mobileET.getText().toString());
 
         // save globally
@@ -554,6 +578,13 @@ public class ProfileFragment extends Fragment {
         emailET.setText(mPerson.getEmail());
         mobileET.setText(mPerson.getMobile_number());
         memberCheckBox.setChecked(mPerson.getIs_member());
+
+        if ( ! personPermission.getOther() ) {
+            localPaidEditTV.setVisibility(View.GONE);
+            localPaidSpinner.setVisibility(View.GONE);
+            memberCheckBox.setVisibility(View.GONE);
+            memberEditTv.setVisibility(View.GONE);
+        }
     }
 
     public void getUpdatedProfile() {
@@ -581,6 +612,7 @@ public class ProfileFragment extends Fragment {
                 if ( isLoggedInPerson ) {
                     APIWrapper.setLoggedInPerson(mPerson);
                     APIWrapper.getPermissions();
+                    hideBasedOnPermissions();
                 }
             }
 
@@ -601,6 +633,7 @@ public class ProfileFragment extends Fragment {
                     if ( isLoggedInPerson ) {
                         APIWrapper.setLoggedInPerson(mPerson);
                         APIWrapper.getPermissions();
+                        hideBasedOnPermissions();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
