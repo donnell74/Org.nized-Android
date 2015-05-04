@@ -13,6 +13,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nized.org.api.APIWrapper;
+import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Checkins;
 import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Person;
@@ -58,7 +59,8 @@ import java.util.Locale;
 public class MainActivity extends ActionBarActivity
         implements ClassBonusDialogFragment.NoticeDialogListener,
                    ChangePasswordDialogFragment.NoticeDialogListener,
-                   RolesDialogFragment.NoticeDialogListener {
+                   RolesDialogFragment.NoticeDialogListener,
+                   AnnouncementsFragment.DisplayAnnouncementDetails{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -89,6 +91,8 @@ public class MainActivity extends ActionBarActivity
     public static final int PEOPLEFRAGMENT = 9;
     public static final int REGISTERFRAGMENT = 10;
     public static final int PROFILEFRAGMENT = 11;
+    private static final int ANNOUNCEMENTSDETAILSFRAGMENT = 12;
+
     private String mEmail = "";
     private String mTitle = "Org.nized";
 
@@ -198,6 +202,15 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         Log.i("changePassword", "");
+    }
+
+    @Override
+    public void DisplayAnnouncementDetails(Announcement announcement) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(AnnouncementDetailFragment.Announcement_to_show,
+                (java.io.Serializable) announcement);
+
+        changeFragment(ANNOUNCEMENTSDETAILSFRAGMENT, bundle);
     }
 
 
@@ -312,6 +325,10 @@ public class MainActivity extends ActionBarActivity
                 ProfileFragment.mPerson = null;
                 fragment.setArguments(args);
                 mTitle = "Profile";
+                break;
+            case ANNOUNCEMENTSDETAILSFRAGMENT:
+                fragment = new AnnouncementDetailFragment();
+                fragment.setArguments(args);
                 break;
             default:
                 fragment = new HomeFragment();

@@ -197,6 +197,7 @@ public class HomeFragment extends Fragment {
             textView.setTextSize(16);
             textView.setSingleLine(true);
             textView.setGravity(gravity);
+            textView.setTextColor(getResources().getColor(R.color.white));
 
             return textView;
         }

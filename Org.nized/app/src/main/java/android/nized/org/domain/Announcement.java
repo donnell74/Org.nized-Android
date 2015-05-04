@@ -14,27 +14,17 @@ import java.util.List;
 @JsonSerialize
 @JsonDeserialize
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(name = "Announcements")
 public class Announcement
-        extends Model
         implements Serializable {
 
-    @Column(name = "email")
     private String email;
-    @Column(name = "creator")
 	private String creator; // email of person who created it is what's passed
-    @Column(name = "title")
 	private String title;
-    @Column(name = "text")
 	private String text;
-    @Column(name = "start_date")
 	private Date start_date;
-    @Column(name = "end_date")
 	private Date end_date;
 	private List<Announcements_Roles> roles;
-    @Column(name = "createdAt")
     private Date createdAt;
-    @Column(name = "updatedAt")
     private Date updatedAt;
 
     public String getEmail() {
