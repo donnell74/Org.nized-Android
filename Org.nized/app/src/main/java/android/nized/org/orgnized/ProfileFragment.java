@@ -143,9 +143,9 @@ public class ProfileFragment extends Fragment {
         // Attach the adapter to a ListView0
         classBonuses.setAdapter(classBonusArrayAdapter);
 
-        mRolesArrayList = mPerson.get_roles();
-        if ( mRolesArrayList == null ) {
-            mRolesArrayList = new ArrayList<>();
+        mRolesArrayList = mPerson.get_roles_safe();
+        for ( String each : mRolesArrayList ) {
+            Log.i("each", each);
         }
 
         mRolesArrayAdapter = (ArrayAdapter) new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mRolesArrayList);
@@ -437,19 +437,55 @@ public class ProfileFragment extends Fragment {
 
         String oldEmail = mPerson.getEmail();
         mPerson.setEmail(emailET.getText().toString());
+        mPerson.setMobile_number(mobileET.getText().toString());
         if ( personPermission.getOther() ) {
             mPerson.setIs_local_paid(Person.localPaidEnum.valueOf(
                     localPaidSpinner.getSelectedItem().toString().toUpperCase()
             ));
-            mPerson.setIs_member(memberCheckBox.isChecked());
+
+            Boolean memberVal = memberCheckBox.isChecked();
+            if ( mPerson.getIs_member() != memberVal ) {
+                mPerson.setIs_member(memberVal);
+                int oldRoleId = (! memberVal) ? APIWrapper.MEMBER_ROLE_ID : APIWrapper.NONMEMBER_ROLE_ID;
+                int newRoleId = (memberVal) ? APIWrapper.MEMBER_ROLE_ID : APIWrapper.NONMEMBER_ROLE_ID;
+                for ( Role eachRole : mPerson.getRoles() ) {
+                    if ( eachRole.getRole_id() == oldRoleId ) {
+                        eachRole.setRole_id(newRoleId);
+                        updateRole(eachRole, oldEmail);
+                    }
+                }
+            }
         }
-        mPerson.setMobile_number(mobileET.getText().toString());
 
-        // save globally
-        sendUpdatedProfile(oldEmail);
-
-        update();
         toggleEditView();
+    }
+
+    private void updateRole(Role role, final String oldEmail) {
+        RequestParams requestParams = role.getPersonRoleRequestParams();
+
+        APIWrapper.post(APIWrapper.UPDATE_PERSON_ROLE + role.getId(),
+                requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                // save globally
+                sendUpdatedProfile(oldEmail);
+
+                update();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                // save globally
+                sendUpdatedProfile(oldEmail);
+
+                update();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+            }
+        });
     }
 
     private void sendUpdatedProfile(String oldEmail) {
@@ -465,36 +501,34 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject person) {
                 // If the response is JSONObject instead of expected JSONArray
-                mPerson = (Person) APIWrapper.parseJSONOjbect(
-                        person,
-                        Person.class);
+                getUpdatedProfile();
 
-                update();
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Profile saved online",
                         Toast.LENGTH_SHORT)
                         .show();
+
+                if ( isLoggedInPerson ) {
+                    APIWrapper.setLoggedInPerson(mPerson);
+                    APIWrapper.getPermissions();
+                    hideBasedOnPermissions();
+                }
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
                 // Pull out the first one
-                try {
-                    mPerson = (Person) APIWrapper.parseJSONOjbect(
-                            all_objs.getJSONObject(0),
-                            Person.class);
+                getUpdatedProfile();
 
-                    update();
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Profile saved online",
-                            Toast.LENGTH_SHORT)
-                            .show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Unable to save data online.",
-                            Toast.LENGTH_SHORT)
-                            .show();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Profile saved online",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                if ( isLoggedInPerson ) {
+                    APIWrapper.setLoggedInPerson(mPerson);
+                    APIWrapper.getPermissions();
+                    hideBasedOnPermissions();
                 }
             }
 

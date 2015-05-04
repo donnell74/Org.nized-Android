@@ -89,7 +89,6 @@ public class Person extends Model implements Serializable {
         return updateParams;
     }
 
-
     public enum classYearEnum {
         FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
     }
@@ -213,6 +212,20 @@ public class Person extends Model implements Serializable {
     }
 
     public List<String> get_roles() {
+        return _roles;
+    }
+
+    public List<String> get_roles_safe() {
+        if ( _roles == null ) {
+            _roles = new ArrayList<>();
+
+            if (roles != null) {
+                for (Role eachRole : roles) {
+                    _roles.add(eachRole.getName());
+                }
+            }
+        }
+
         return _roles;
     }
 

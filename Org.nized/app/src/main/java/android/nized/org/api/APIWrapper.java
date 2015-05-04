@@ -84,7 +84,10 @@ public class APIWrapper {
     public static final String DELETE_PERSON_ROLE = "person_role/destroy/";
     public static final String FIND_ROLES = "roles/find/";
     public static final String CREATE_PERSON_ROLE = "person_role/create/";
+    public static final String UPDATE_PERSON_ROLE = "person_role/update/";
     public static final String FIND_PERMISSIONS = "permissions/find/";
+    public static final int NONMEMBER_ROLE_ID = 11;
+    public static final int MEMBER_ROLE_ID = 10;
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();
@@ -186,7 +189,6 @@ public class APIWrapper {
                 {
                     ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
                     modelObjects[0] = mapper.readValue(response, domain);
-                    Log.w("test", modelObjects[0].toString());
                 } catch ( JsonMappingException e ) {
                     e.printStackTrace();
                 } catch ( JsonParseException e ) {
@@ -249,7 +251,6 @@ public class APIWrapper {
             url += "role_id=" + eachRole.getRole_id() + "&";
         }
 
-        Log.i("url", url);
         APIWrapper.post(url, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
@@ -274,10 +275,6 @@ public class APIWrapper {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-
-                for ( Permission eachPerm : permissions ) {
-                    Log.i("eachPerm", eachPerm.toString());
                 }
             }
 

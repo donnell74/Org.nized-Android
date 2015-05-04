@@ -34,7 +34,6 @@ public class RegisterFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CARDID = "card_id";
-    private static final int NONMEMBER_ROLE_ID = 11;
 
     // TODO: Rename and change types of parameters
     private String cardID = "";
@@ -224,7 +223,7 @@ public class RegisterFragment extends Fragment {
     private void addNonMemberRole(String email, String cardID) {
         RequestParams requestParams = new RequestParams();
         requestParams.put("email", email);
-        requestParams.put("role_id", NONMEMBER_ROLE_ID);
+        requestParams.put("role_id", APIWrapper.NONMEMBER_ROLE_ID);
         final MainActivity mainActivity = (MainActivity) getActivity();
 
         APIWrapper.post(APIWrapper.CREATE_PERSON_ROLE, requestParams, new JsonHttpResponseHandler() {

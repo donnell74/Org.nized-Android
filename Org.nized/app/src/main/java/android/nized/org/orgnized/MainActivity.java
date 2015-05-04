@@ -567,7 +567,7 @@ public class MainActivity extends ActionBarActivity
         sendRole(role);
     }
 
-    private void sendRole(Role role) {
+    public void sendRole(Role role) {
         RequestParams requestParams = role.getPersonRequestParams();
         final ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("current");
 

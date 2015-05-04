@@ -106,12 +106,20 @@ public class Role implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Role [role_id=" + id + ", name=" + name + "]";
+		return "Role [id=" + id + ", name=" + name + ", role_id=" + role_id + "]";
 	}
 
 	public RequestParams getPersonRequestParams() {
 		RequestParams requestParams = new RequestParams();
 		requestParams.put("role_id", id);
+		requestParams.put("email", email);
+
+		return requestParams;
+	}
+
+	public RequestParams getPersonRoleRequestParams() {
+		RequestParams requestParams = new RequestParams();
+		requestParams.put("role_id", role_id);
 		requestParams.put("email", email);
 
 		return requestParams;
