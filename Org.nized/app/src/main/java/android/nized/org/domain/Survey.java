@@ -20,6 +20,7 @@ public class Survey implements Serializable {
 	private int id;
 	private String creator;
 	private String name;
+	private Boolean openToNonMembers;
 	private Date start_date;
 	private Date end_date;
 	private List<Question> questions;
@@ -137,4 +138,11 @@ public class Survey implements Serializable {
 		return "Survey [id=" + id + ", creator=" + creator + ", name=" + name + "]";
 	}
 
+	public Boolean isOpenToNonMembers() {
+		return openToNonMembers;
+	}
+
+	public void setOpenToNonMembers(Boolean openToNonMembers) {
+		this.openToNonMembers = openToNonMembers;
+	}
 }

@@ -251,7 +251,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case SURVEYSFRAGMENT:
                 // permissions on per survey bias
-                Log.e("Surveys", "You still need to implement this");
+                fragment = new SurveysFragment();
                 break;
             case FEEDBACKFRAGMENT:
                 sendEmail();

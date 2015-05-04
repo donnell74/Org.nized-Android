@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_height="50dp"
+        android:layout_width="fill_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/surveyName"
+            android:layout_weight="2"
+            android:id="@+id/surveyName"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/expires"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/blankDate"
+            android:id="@+id/expiresDate"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+
+    <!--LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dateTaken"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notTaken"
+            android:id="@+id/takenTV"
+            android:gravity="right"
+            android:layout_weight="1"
+            />
+    </LinearLayout-->
+</LinearLayout>

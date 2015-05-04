@@ -92,5 +92,10 @@
     <string name="create_person">Create Person</string>
     <string name="settings_pwd_equal">Confirm password is the same</string>
     <string name="settings_pwd_not_equal">Confirm password is different</string>
+    <string name="dateTaken">Date Taken:</string>
+    <string name="notTaken">Not Taken</string>
+    <string name="surveyName">Survey Name</string>
+    <string name="expires">Expires:</string>
+    <string name="blankDate">DD/MM</string>
 
 </resources>
