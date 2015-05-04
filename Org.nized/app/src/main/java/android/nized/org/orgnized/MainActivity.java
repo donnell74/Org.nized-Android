@@ -16,6 +16,7 @@ import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Checkins;
 import android.nized.org.domain.ClassBonus;
+import android.nized.org.domain.Note;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Role;
 import android.os.Bundle;
@@ -60,7 +61,8 @@ public class MainActivity extends ActionBarActivity
         implements ClassBonusDialogFragment.NoticeDialogListener,
                    ChangePasswordDialogFragment.NoticeDialogListener,
                    RolesDialogFragment.NoticeDialogListener,
-                   AnnouncementsFragment.DisplayAnnouncementDetails{
+                   AnnouncementsFragment.DisplayAnnouncementDetails,
+                   NotesFragment.DisplayNoteDetails{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -92,6 +94,7 @@ public class MainActivity extends ActionBarActivity
     public static final int REGISTERFRAGMENT = 10;
     public static final int PROFILEFRAGMENT = 11;
     private static final int ANNOUNCEMENTSDETAILSFRAGMENT = 12;
+    private static final int NOTEDETAILSFRAGMENT = 13;
 
     private String mEmail = "";
     private String mTitle = "Org.nized";
@@ -213,6 +216,15 @@ public class MainActivity extends ActionBarActivity
         changeFragment(ANNOUNCEMENTSDETAILSFRAGMENT, bundle);
     }
 
+    @Override
+    public void DisplayNoteDetails(Note note) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(NoteDetailFragment.NOTE_TO_SHOW,
+                (java.io.Serializable) note);
+
+        changeFragment(NOTEDETAILSFRAGMENT, bundle);
+    }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -328,6 +340,10 @@ public class MainActivity extends ActionBarActivity
                 break;
             case ANNOUNCEMENTSDETAILSFRAGMENT:
                 fragment = new AnnouncementDetailFragment();
+                fragment.setArguments(args);
+                break;
+            case NOTEDETAILSFRAGMENT:
+                fragment = new NoteDetailFragment();
                 fragment.setArguments(args);
                 break;
             default:

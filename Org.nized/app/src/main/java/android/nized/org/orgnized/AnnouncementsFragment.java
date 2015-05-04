@@ -71,6 +71,7 @@ public class AnnouncementsFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, final JSONArray all_objs) {
                 announcements.clear();
+                announcementsList.clear();
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

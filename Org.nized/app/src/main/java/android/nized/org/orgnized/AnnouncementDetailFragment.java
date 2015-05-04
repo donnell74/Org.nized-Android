@@ -58,5 +58,4 @@ public class AnnouncementDetailFragment extends Fragment {
 
         return main_layout;
     }
-
 }
