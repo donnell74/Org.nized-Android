@@ -3,6 +3,7 @@ package android.nized.org.orgnized;
 import android.app.Activity;
 import android.net.Uri;
 import android.nized.org.api.APIWrapper;
+import android.nized.org.domain.Note;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Question;
 import android.nized.org.domain.Survey;
@@ -56,6 +57,7 @@ public class SurveysFragment extends Fragment {
     public List<Survey> mSurveysList = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private View surveyItemLayout;
+    private DisplayQuestion mCallback;
 
     /**
      * Use this factory method to create a new instance of
@@ -102,7 +104,7 @@ public class SurveysFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray surveys) {
                 surveysContainer.removeAllViews();
-                for (int i = 0; i < surveys.length(); i++ ) {
+                for (int i = 0; i < surveys.length(); i++) {
                     JSONObject objToParse = null;
                     try {
                         objToParse = (JSONObject) surveys.getJSONObject(i);
@@ -111,24 +113,26 @@ public class SurveysFragment extends Fragment {
                     }
 
                     Survey thisSurvey = (Survey) APIWrapper.parseJSONOjbect(objToParse, Survey.class);
-                    if ( thisSurvey.getQuestions().size() == 0 ) {
+                    if (thisSurvey.getQuestions().size() == 0) {
                         continue;
                     }
 
                     mSurveysList.add(thisSurvey);
 
                     surveyItemLayout = mLayoutInflater.inflate(R.layout.survey_list_item, surveysContainer, false);
-                    TextView surveyNameTV = (TextView) surveyItemLayout.findViewById(R.id.surveyName);
+                    final TextView surveyNameTV = (TextView) surveyItemLayout.findViewById(R.id.surveyName);
                     TextView expiresDateTV = (TextView) surveyItemLayout.findViewById(R.id.expiresDate);
                     //TextView takenDateTV = (TextView) surveyItemLayout.findViewById(R.id.takenTV);
 
                     java.util.Date endDate = thisSurvey.getEnd_date();
                     surveyNameTV.setText(thisSurvey.getName());
-                    expiresDateTV.setText((endDate.getMonth() + 1) + "/" + endDate.getDate() );
+                    expiresDateTV.setText((endDate.getMonth() + 1) + "/" + endDate.getDate());
                     surveyItemLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             int position = ((ViewGroup) view.getParent()).indexOfChild(view);
+                            Log.i("survey", String.valueOf(position));
+                            mCallback.DisplayQuestion(mSurveysList.get(position));
                         }
                     });
                     surveysContainer.addView(surveyItemLayout);
@@ -146,5 +150,23 @@ public class SurveysFragment extends Fragment {
         });
 
         return main_layout;
+    }
+
+    public interface DisplayQuestion{
+        public void DisplayQuestion(Survey survey);
+    };
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (DisplayQuestion) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 }

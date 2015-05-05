@@ -11,7 +11,7 @@ import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-@JsonIgnoreProperties({"roles"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Survey implements Serializable {
 
 	/*
@@ -24,6 +24,7 @@ public class Survey implements Serializable {
 	private Date start_date;
 	private Date end_date;
 	private List<Question> questions;
+	private List<Role> roles;
     private Date createdAt;
     private Date updatedAt;
 
@@ -144,5 +145,13 @@ public class Survey implements Serializable {
 
 	public void setOpenToNonMembers(Boolean openToNonMembers) {
 		this.openToNonMembers = openToNonMembers;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 }

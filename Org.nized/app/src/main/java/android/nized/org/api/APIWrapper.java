@@ -88,6 +88,9 @@ public class APIWrapper {
     public static final String FIND_PERMISSIONS = "permissions/find/";
     public static final int NONMEMBER_ROLE_ID = 11;
     public static final int MEMBER_ROLE_ID = 10;
+    public static final String CREATE_ANSWER = "answers/create/";
+    public static final String UPDATE_ANSWER = "answers/update/";
+    public static final String DELETE_ANSWER = "answers/destroy/";
 
     // A SyncHttpClient is an AsyncHttpClient
     public static AsyncHttpClient syncHttpClient = new SyncHttpClient();

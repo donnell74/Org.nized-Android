@@ -13,7 +13,7 @@ public class Answer implements Serializable {
 	private int id;
 	private int question_id;
 	private String text;
-	private String type;
+    private Person email;
     private Date createdAt;
     private Date updatedAt;
 
@@ -39,14 +39,6 @@ public class Answer implements Serializable {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Date getCreatedAt() {
@@ -77,7 +69,6 @@ public class Answer implements Serializable {
         if (createdAt != null ? !createdAt.equals(answer.createdAt) : answer.createdAt != null)
             return false;
         if (text != null ? !text.equals(answer.text) : answer.text != null) return false;
-        if (type != null ? !type.equals(answer.type) : answer.type != null) return false;
         if (updatedAt != null ? !updatedAt.equals(answer.updatedAt) : answer.updatedAt != null)
             return false;
 
@@ -89,7 +80,6 @@ public class Answer implements Serializable {
         int result = id;
         result = 31 * result + question_id;
         result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
@@ -101,9 +91,16 @@ public class Answer implements Serializable {
                 "id=" + id +
                 ", question_id=" + question_id +
                 ", text='" + text + '\'' +
-                ", type='" + type + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public Person getEmail() {
+        return email;
+    }
+
+    public void setEmail(Person email) {
+        this.email = email;
     }
 }

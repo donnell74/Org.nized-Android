@@ -1,5 +1,7 @@
 package android.nized.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Question implements Serializable {
 
 	/*
@@ -36,9 +39,12 @@ public class Question implements Serializable {
         return survey_id;
     }
 
+    @JsonIgnore
     public void setSurvey_id(int survey_id) {
         this.survey_id = survey_id;
     }
+
+    public void setSurvey_id(Survey survey_id) { this.survey_id = survey_id.getId(); }
 
     public String getQuestionText() {
 		return question_text;

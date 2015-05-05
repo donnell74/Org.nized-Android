@@ -97,5 +97,6 @@
     <string name="surveyName">Survey Name</string>
     <string name="expires">Expires:</string>
     <string name="blankDate">DD/MM</string>
+    <string name="next">Next</string>
 
 </resources>

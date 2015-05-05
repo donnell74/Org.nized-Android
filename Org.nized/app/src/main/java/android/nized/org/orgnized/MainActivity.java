@@ -19,6 +19,7 @@ import android.nized.org.domain.ClassBonus;
 import android.nized.org.domain.Note;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Role;
+import android.nized.org.domain.Survey;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
@@ -40,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
+import com.google.android.gms.games.quest.Quest;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -62,7 +64,8 @@ public class MainActivity extends ActionBarActivity
                    ChangePasswordDialogFragment.NoticeDialogListener,
                    RolesDialogFragment.NoticeDialogListener,
                    AnnouncementsFragment.DisplayAnnouncementDetails,
-                   NotesFragment.DisplayNoteDetails{
+                   NotesFragment.DisplayNoteDetails,
+                   SurveysFragment.DisplayQuestion{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -93,8 +96,9 @@ public class MainActivity extends ActionBarActivity
     public static final int PEOPLEFRAGMENT = 9;
     public static final int REGISTERFRAGMENT = 10;
     public static final int PROFILEFRAGMENT = 11;
-    private static final int ANNOUNCEMENTSDETAILSFRAGMENT = 12;
-    private static final int NOTEDETAILSFRAGMENT = 13;
+    public static final int ANNOUNCEMENTSDETAILSFRAGMENT = 12;
+    public static final int NOTEDETAILSFRAGMENT = 13;
+    public static final int QUESTIONFRAGMENT = 14;
 
     private String mEmail = "";
     private String mTitle = "Org.nized";
@@ -225,6 +229,15 @@ public class MainActivity extends ActionBarActivity
         changeFragment(NOTEDETAILSFRAGMENT, bundle);
     }
 
+    @Override
+    public void DisplayQuestion(Survey survey) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(QuestionFragment.SURVEY_TO_TAKE,
+                (java.io.Serializable) survey);
+
+        changeFragment(QUESTIONFRAGMENT, bundle);
+    }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -249,10 +262,6 @@ public class MainActivity extends ActionBarActivity
     public void changeFragment(int position, Bundle args) {
         Fragment fragment = null;
         switch (position) {
-            case HOMEFRAGMENT:
-                // parts of home fragment will be blocked
-                fragment = new HomeFragment();
-                break;
             case ATTENDANCEFRAGMENT:
                 if ( ! APIWrapper.getPermission("checkins").getOther() ) {
                     denyToast();
@@ -346,6 +355,11 @@ public class MainActivity extends ActionBarActivity
                 fragment = new NoteDetailFragment();
                 fragment.setArguments(args);
                 break;
+            case QUESTIONFRAGMENT:
+                fragment = new QuestionFragment();
+                fragment.setArguments(args);
+                break;
+            case HOMEFRAGMENT:
             default:
                 fragment = new HomeFragment();
                 break;

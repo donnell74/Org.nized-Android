@@ -1,5 +1,6 @@
 package android.nized.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.loopj.android.http.RequestParams;
@@ -9,6 +10,7 @@ import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Role implements Serializable {
 
 	/*
