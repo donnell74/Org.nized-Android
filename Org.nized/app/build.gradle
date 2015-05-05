@@ -27,6 +27,10 @@ android {
         exclude 'META-INF/NOTICE'
     }
 }
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -34,4 +38,5 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.+'
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 }

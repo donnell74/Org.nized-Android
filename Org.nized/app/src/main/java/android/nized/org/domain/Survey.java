@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-@JsonIgnoreProperties({"roles"})
-public class Survey {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Survey implements Serializable {
 
 	/*
 	 * id creator name start_date end_date questions roles
@@ -19,9 +20,11 @@ public class Survey {
 	private int id;
 	private String creator;
 	private String name;
+	private Boolean openToNonMembers;
 	private Date start_date;
 	private Date end_date;
 	private List<Question> questions;
+	private List<Role> roles;
     private Date createdAt;
     private Date updatedAt;
 
@@ -136,4 +139,19 @@ public class Survey {
 		return "Survey [id=" + id + ", creator=" + creator + ", name=" + name + "]";
 	}
 
+	public Boolean isOpenToNonMembers() {
+		return openToNonMembers;
+	}
+
+	public void setOpenToNonMembers(Boolean openToNonMembers) {
+		this.openToNonMembers = openToNonMembers;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 }

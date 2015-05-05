@@ -1,14 +1,18 @@
 package android.nized.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Question {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Question implements Serializable {
 
 	/*
 	 * id survey_id question_text type possible_answers roles
@@ -35,9 +39,12 @@ public class Question {
         return survey_id;
     }
 
+    @JsonIgnore
     public void setSurvey_id(int survey_id) {
         this.survey_id = survey_id;
     }
+
+    public void setSurvey_id(Survey survey_id) { this.survey_id = survey_id.getId(); }
 
     public String getQuestionText() {
 		return question_text;

@@ -31,7 +31,7 @@ import org.json.JSONObject;
  * create an instance of this fragment.
  */
 public class RegisterFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+    // TODO: Rename parameter arguments, choose announcements that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CARDID = "card_id";
 
@@ -176,9 +176,7 @@ public class RegisterFragment extends Fragment {
     }
 
 
-    private void linkEmailToCardID( String email ) {
-        Log.i("linkEmailToCardID", "Entered");
-        Log.i("linkEmailToCardID", email);
+    private void linkEmailToCardID( final String email ) {
         RequestParams requestParams = new RequestParams();
         requestParams.put("email", email);
         if ( ! cardID.equals("") ) {
@@ -187,17 +185,13 @@ public class RegisterFragment extends Fragment {
             requestParams.put("card_id", email);
             cardID = email;
         }
-        Log.i("linkEmailToCardID", requestParams.toString());
-
-        final MainActivity mainActivity = (MainActivity) getActivity();
 
         APIWrapper.post(APIWrapper.FIND_OR_CREATE_CARD_ID_TO_EMAIL, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject result) {
                 // If the response is JSONObject instead of expected JSONArray
                 Log.i("Link Email Object", result.toString());
-                mainActivity.checkInPerson(cardID);
-                mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
+                addNonMemberRole(email, cardID);
             }
 
             @Override
@@ -205,8 +199,7 @@ public class RegisterFragment extends Fragment {
                 // Pull out the first one
                 try {
                     Log.i("Link Email Array", result.get(0).toString());
-                    mainActivity.checkInPerson(cardID);
-                    mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
+                    addNonMemberRole(email, cardID);
                 } catch (JSONException e) {
                     // no results, get info
                     getPersonInfo();
@@ -225,6 +218,42 @@ public class RegisterFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void addNonMemberRole(String email, String cardID) {
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("email", email);
+        requestParams.put("role_id", APIWrapper.NONMEMBER_ROLE_ID);
+        final MainActivity mainActivity = (MainActivity) getActivity();
+
+        APIWrapper.post(APIWrapper.CREATE_PERSON_ROLE, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject result) {
+                // If the response is JSONObject instead of expected JSONArray
+                mainActivity.checkInPerson(RegisterFragment.this.cardID);
+                mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray result) {
+                // Pull out the first one
+                mainActivity.checkInPerson(RegisterFragment.this.cardID);
+                mainActivity.changeFragment(MainActivity.HOMEFRAGMENT);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.w("Link Email Fail String", responseString);
+            }
+
+            @Override
+            public void onFailure(int statusCode, org.apache.http.Header[] headers, java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
+                if (errorResponse != null) {
+                    Log.i("Link Email Fail Object", errorResponse.toString());
+                }
+            }
+        });
+
     }
 
 
@@ -300,13 +329,13 @@ public class RegisterFragment extends Fragment {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.w("Create Person Fail String", responseString);
+                    Log.w("Create Person Fail", responseString);
                 }
 
                 @Override
                 public void onFailure(int statusCode, org.apache.http.Header[] headers, java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
                     if (errorResponse != null) {
-                        Log.i("Create Person Fail Object", errorResponse.toString());
+                        Log.i("Create Person Fail", errorResponse.toString());
                     }
                 }
             });

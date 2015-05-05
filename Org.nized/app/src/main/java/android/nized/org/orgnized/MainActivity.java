@@ -2,18 +2,27 @@ package android.nized.org.orgnized;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nized.org.api.APIWrapper;
+import android.nized.org.domain.Announcement;
 import android.nized.org.domain.Checkins;
+import android.nized.org.domain.ClassBonus;
+import android.nized.org.domain.Note;
 import android.nized.org.domain.Person;
+import android.nized.org.domain.Role;
+import android.nized.org.domain.Survey;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,6 +40,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
+import com.google.android.gms.games.quest.Quest;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -48,7 +59,13 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+        implements ClassBonusDialogFragment.NoticeDialogListener,
+                   ChangePasswordDialogFragment.NoticeDialogListener,
+                   RolesDialogFragment.NoticeDialogListener,
+                   AnnouncementsFragment.DisplayAnnouncementDetails,
+                   NotesFragment.DisplayNoteDetails,
+                   SurveysFragment.DisplayQuestion{
     public static final String PREFS_NAMES = "OrgnizedPrefs";
     private List<String> mNavTitles;
     private DrawerLayout mDrawerLayout;
@@ -79,6 +96,10 @@ public class MainActivity extends ActionBarActivity {
     public static final int PEOPLEFRAGMENT = 9;
     public static final int REGISTERFRAGMENT = 10;
     public static final int PROFILEFRAGMENT = 11;
+    public static final int ANNOUNCEMENTSDETAILSFRAGMENT = 12;
+    public static final int NOTEDETAILSFRAGMENT = 13;
+    public static final int QUESTIONFRAGMENT = 14;
+
     private String mEmail = "";
     private String mTitle = "Org.nized";
 
@@ -86,6 +107,15 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        APIWrapper.mContext = this;
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+        BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),
+                R.drawable.banner));
+
+        actionBar.setBackgroundDrawable(background);
+
 
         mNavTitles = new ArrayList<String>(Arrays.asList( getResources().getStringArray(R.array.nav_titles_array) ));
 
@@ -120,17 +150,16 @@ public class MainActivity extends ActionBarActivity {
         mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null).create();
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mAdapter == null) {
+        /*if (mAdapter == null) {
             //showMessage(R.string.error, R.string.no_nfc);
             finish();
             return;
-        }
+        }*/
 
         mPendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         mNdefPushMessage = new NdefMessage(new NdefRecord[] { newTextRecord(
                 "Message from NFC Reader :-)", Locale.ENGLISH, true) });
-
 
         // Restore preferences
         /* Need database to be implemented first because setLoginPerson
@@ -141,6 +170,8 @@ public class MainActivity extends ActionBarActivity {
             Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
             MainActivity.this.startActivity(myIntent);
         }*/
+
+        APIWrapper.getPermissions();
     }
 
 
@@ -175,6 +206,38 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Log.i("changePassword", "");
+    }
+
+    @Override
+    public void DisplayAnnouncementDetails(Announcement announcement) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(AnnouncementDetailFragment.Announcement_to_show,
+                (java.io.Serializable) announcement);
+
+        changeFragment(ANNOUNCEMENTSDETAILSFRAGMENT, bundle);
+    }
+
+    @Override
+    public void DisplayNoteDetails(Note note) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(NoteDetailFragment.NOTE_TO_SHOW,
+                (java.io.Serializable) note);
+
+        changeFragment(NOTEDETAILSFRAGMENT, bundle);
+    }
+
+    @Override
+    public void DisplayQuestion(Survey survey) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(QuestionFragment.SURVEY_TO_TAKE,
+                (java.io.Serializable) survey);
+
+        changeFragment(QUESTIONFRAGMENT, bundle);
+    }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -182,6 +245,13 @@ public class MainActivity extends ActionBarActivity {
             changeFragment(position);
         }
 
+    }
+
+    public void denyToast() {
+        Toast.makeText(getApplicationContext(),
+                "You do not have access to this feature",
+                Toast.LENGTH_SHORT)
+                .show();
     }
 
     public void changeFragment(int position) {
@@ -192,53 +262,104 @@ public class MainActivity extends ActionBarActivity {
     public void changeFragment(int position, Bundle args) {
         Fragment fragment = null;
         switch (position) {
-            case HOMEFRAGMENT:
-                fragment = new HomeFragment();
-                break;
             case ATTENDANCEFRAGMENT:
+                if ( ! APIWrapper.getPermission("checkins").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new AttendanceFragment();
                 break;
             case NOTESFRAGMENT:
+                // permissions on per note bias
                 fragment = new NotesFragment();
                 break;
             case MYPROFILEFRAGMENT:
+                // parts of profile will be blocked
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
+                ProfileFragment.isLoggedInPerson = true;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLoggedInPerson());
                 fragment.setArguments(args);
                 break;
             case SURVEYSFRAGMENT:
-                Log.e("Surveys", "You still need to implement this");
+                // permissions on per survey bias
+                fragment = new SurveysFragment();
                 break;
             case FEEDBACKFRAGMENT:
-                Log.e("Feedback", "You still need to implement this");
+                sendEmail();
                 break;
             case ANNOUNCEMENTSFRAGMENT:
+                // permissions on per announcement bias
                 fragment = new AnnouncementsFragment();
                 break;
             case LASTSCANNEDFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
+                ProfileFragment.isLoggedInPerson = false;
                 args.putSerializable(ProfileFragment.PERSON_TO_SHOW,
                         (java.io.Serializable) APIWrapper.getLastScannedPerson());
                 fragment.setArguments(args);
                 break;
             case CLASSBONUSESFRAGMENT:
-                Log.e("Class Bonuses", "You still need to implement this");
+                if ( ! APIWrapper.getPermission("classbonuses").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
+                fragment = new ClassBonusFragment();
+                fragment.setArguments(args);
                 break;
             case PEOPLEFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new PeopleFragment();
+                fragment.setArguments(args);
                 break;
             case REGISTERFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new RegisterFragment();
                 args.putString("card_id", mTagID);
                 mTagID = "";
                 fragment.setArguments(args);
                 break;
             case PROFILEFRAGMENT:
+                if ( ! APIWrapper.getPermission("person").getOther() ) {
+                    denyToast();
+                    return;
+                }
+
                 fragment = new ProfileFragment();
+                ProfileFragment.mPerson = null;
                 fragment.setArguments(args);
                 mTitle = "Profile";
                 break;
+            case ANNOUNCEMENTSDETAILSFRAGMENT:
+                fragment = new AnnouncementDetailFragment();
+                fragment.setArguments(args);
+                break;
+            case NOTEDETAILSFRAGMENT:
+                fragment = new NoteDetailFragment();
+                fragment.setArguments(args);
+                break;
+            case QUESTIONFRAGMENT:
+                fragment = new QuestionFragment();
+                fragment.setArguments(args);
+                break;
+            case HOMEFRAGMENT:
             default:
                 fragment = new HomeFragment();
                 break;
@@ -247,7 +368,7 @@ public class MainActivity extends ActionBarActivity {
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, fragment).addToBackStack("home").commit();
+                    .replace(R.id.content_frame, fragment, "current").addToBackStack("home").commit();
 
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
@@ -261,7 +382,27 @@ public class MainActivity extends ActionBarActivity {
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             // error in creating fragment
-            Log.e("MainActivity", "Error in creating fragment");
+            Log.e("MainActivity", "Error in creating fragment or sending email");
+        }
+    }
+
+    private void sendEmail() {
+        String[] TO = {"reorconsultants@gmail.com"};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Org.nized Feedback");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            finish();
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this,
+                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -391,7 +532,7 @@ public class MainActivity extends ActionBarActivity {
                     APIWrapper.setLastScannedPerson(thisPerson);
                     Toast.makeText(getApplicationContext(),
                             "Scanned " + thisPerson.getFirst_name() +
-                                   " " + thisPerson.getLast_name(),
+                                    " " + thisPerson.getLast_name(),
                             Toast.LENGTH_LONG)
                             .show();
 
@@ -431,6 +572,10 @@ public class MainActivity extends ActionBarActivity {
                             changeFragment(REGISTERFRAGMENT);
                             break;
                         case Checkins.ALREADY_CHECKED_IN:
+                            Person tempPerson = new Person();
+                            tempPerson.setEmail(response.getString("email"));
+                            APIWrapper.setLastScannedPerson(tempPerson);
+
                             Toast.makeText(getApplicationContext(),
                                     "Person has already checked in today.",
                                     Toast.LENGTH_LONG)
@@ -443,6 +588,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
 
     private long getReversed(byte[] bytes) {
         long result = 0;
@@ -459,5 +605,142 @@ public class MainActivity extends ActionBarActivity {
     public void onNewIntent(Intent intent) {
         setIntent(intent);
         resolveIntent(intent);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, Role role) {
+        Log.i("role submit", "Role dialog: " + role.toString());
+
+        sendRole(role);
+    }
+
+    public void sendRole(Role role) {
+        RequestParams requestParams = role.getPersonRequestParams();
+        final ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("current");
+
+        APIWrapper.post(APIWrapper.CREATE_PERSON_ROLE, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                Toast.makeText(getApplicationContext(),
+                        "Person role created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getApplicationContext(),
+                        "Person role created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to delete person role",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, ClassBonus classBonus) {
+        // submit data
+        Log.i("Submit", "Class Bonus Dialog: " + classBonus.toString());
+
+        sendClassBonus(classBonus);
+    }
+
+    private void sendPersonClassBonus(ClassBonus classBonus) {
+        RequestParams requestParams = classBonus.getPersonRequestParams();
+        final ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag("current");
+
+        APIWrapper.post(APIWrapper.CREATE_PERSON_CLASS_BONUSES, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                Toast.makeText(getApplicationContext(),
+                        "Class bonus created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                Toast.makeText(getApplicationContext(),
+                        "Class bonus created",
+                        Toast.LENGTH_SHORT)
+                        .show();
+
+                profileFragment.getUpdatedProfile();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to delete class bonuses",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+    }
+
+    private void sendClassBonus(final ClassBonus classBonus) {
+        RequestParams requestParams = classBonus.getRequestParams();
+
+        APIWrapper.post(APIWrapper.CREATE_CLASS_BONUSES, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject object) {
+                try {
+                    object.put("class_bonus_id", object.get("id"));
+                    object.remove("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                ClassBonus newClassBonus = (ClassBonus) APIWrapper.parseJSONOjbect(
+                        object,
+                        ClassBonus.class);
+                newClassBonus.setEmail(classBonus.getEmail());
+
+                sendPersonClassBonus(newClassBonus);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray all_objs) {
+                try {
+                    JSONObject object = all_objs.getJSONObject(0);
+                    object.put("class_bonus_id", object.get("id"));
+                    object.remove("id");
+
+                    ClassBonus newClassBonus = (ClassBonus) APIWrapper.parseJSONOjbect(
+                            object,
+                            ClassBonus.class);
+                    newClassBonus.setEmail(classBonus.getEmail());
+
+                    sendPersonClassBonus(newClassBonus);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.i(String.valueOf(statusCode), responseString);
+                Toast.makeText(getApplicationContext(),
+                        "Unable to create class bonuses",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 }

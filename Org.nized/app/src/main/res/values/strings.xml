@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Org.nized</string>
+    <string name="org_name">MoState AITP</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_close">close drawer</string>
@@ -18,7 +19,50 @@
     <string name="email_label">Email:</string>
     <string name="password_label">Password:</string>
     <string name="submit_button">Submit</string>
+    <string name="cancel">Cancel</string>
     <string name="undefined">N/A</string>
+    <string name="blank"></string>
+    <string name="profile_edit_name">Name:</string>
+    <string name="profile_edit_email">Email: </string>
+    <string name="profile_edit_ismember">Is Member: </string>
+    <string name="profile_edit_localPaid">Is Local Paid: </string>
+    <string name="profile_edit_mobile">Mobile: </string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="showClassBonuses">Show Class Bonuses</string>
+    <string name="hideClassBonuses">Hide Class Bonuses</string>
+    <string name="showRoles">Show Roles</string>
+    <string name="hideRoles">Hide Roles</string>
+    <string name="classBonus">Class Bonus</string>
+    <string name="changePassword">Change Password</string>
+    <string name="prevPassword">Old Password</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="general">General</string>
+    <string name="total">Total</string>
+    <string name="member">Members</string>
+    <string name="zero">0</string>
+
+    <string-array name="semesters">
+        <item>FA14</item>
+        <item>SP15</item>
+        <item>FA15</item>
+        <item>SP16</item>
+        <item>FA16</item>
+        <item>SP17</item>
+        <item>FA17</item>
+        <item>SP18</item>
+    </string-array>
+
+    <string-array name="localPaid_spinner_options">
+        <item>False</item>
+        <item>Pending</item>
+        <item>True</item>
+    </string-array>
 
     <string-array name="nav_titles_array">
         <item>Home</item>
@@ -46,5 +90,13 @@
     <string name="first_name_label">First Name</string>
     <string name="last_name_label">Last Name</string>
     <string name="create_person">Create Person</string>
+    <string name="settings_pwd_equal">Confirm password is the same</string>
+    <string name="settings_pwd_not_equal">Confirm password is different</string>
+    <string name="dateTaken">Date Taken:</string>
+    <string name="notTaken">Not Taken</string>
+    <string name="surveyName">Survey Name</string>
+    <string name="expires">Expires:</string>
+    <string name="blankDate">DD/MM</string>
+    <string name="next">Next</string>
 
 </resources>

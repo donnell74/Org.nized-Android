@@ -1,16 +1,22 @@
 package android.nized.org.domain;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Announcement {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Announcement
+        implements Serializable {
 
-	private int id;
     private String email;
 	private String creator; // email of person who created it is what's passed
 	private String title;
@@ -20,14 +26,6 @@ public class Announcement {
 	private List<Announcements_Roles> roles;
     private Date createdAt;
     private Date updatedAt;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
     public String getEmail() {
         return email;
@@ -108,7 +106,6 @@ public class Announcement {
 
         Announcement that = (Announcement) o;
 
-        if (id != that.id) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null)
             return false;
         if (creator != null ? !creator.equals(that.creator) : that.creator != null) return false;
@@ -128,7 +125,7 @@ public class Announcement {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = 1;
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (creator != null ? creator.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
@@ -144,8 +141,7 @@ public class Announcement {
     @Override
     public String toString() {
         return "Announcement{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
                 ", creator='" + creator + '\'' +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +

@@ -1,13 +1,17 @@
 package android.nized.org.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.loopj.android.http.RequestParams;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
-public class Role {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Role implements Serializable {
 
 	/*
 	 * role_id name
@@ -104,7 +108,22 @@ public class Role {
 
 	@Override
 	public String toString() {
-		return "Role [role_id=" + id + ", name=" + name + "]";
+		return "Role [id=" + id + ", name=" + name + ", role_id=" + role_id + "]";
 	}
 
+	public RequestParams getPersonRequestParams() {
+		RequestParams requestParams = new RequestParams();
+		requestParams.put("role_id", id);
+		requestParams.put("email", email);
+
+		return requestParams;
+	}
+
+	public RequestParams getPersonRoleRequestParams() {
+		RequestParams requestParams = new RequestParams();
+		requestParams.put("role_id", role_id);
+		requestParams.put("email", email);
+
+		return requestParams;
+	}
 }

@@ -59,6 +59,9 @@ public class HomeFragment extends Fragment {
             populateView();
         }
     };
+    private TextView mTotalTV;
+    private TextView mGeneralTV;
+    private TextView mMembersTV;
 
 
     private class MyAPI extends APIUtilities {
@@ -91,11 +94,15 @@ public class HomeFragment extends Fragment {
                 new IntentFilter("updateNotify"));
 
         home_layout = rootView;
+
+        mTotalTV = (TextView) home_layout.findViewById(R.id.totalTv);
+        mGeneralTV = (TextView) home_layout.findViewById(R.id.generalTotalTV);
+        mMembersTV = (TextView) home_layout.findViewById(R.id.membersTotalTV);
+
         myPerson = APIWrapper.getLoggedInPerson();
         Log.e("myperson", myPerson.toString());
 
-        // setup view using myPerson
-        setPersonAttributes();
+        // setup view using myerson
         populateView();
 
         return rootView;
@@ -190,6 +197,7 @@ public class HomeFragment extends Fragment {
             textView.setTextSize(16);
             textView.setSingleLine(true);
             textView.setGravity(gravity);
+            textView.setTextColor(getResources().getColor(R.color.white));
 
             return textView;
         }
@@ -206,12 +214,9 @@ public class HomeFragment extends Fragment {
     private void addAttendances(JSONObject attendance) {
         if ( acquireView() ) {
             try {
-                LinearLayout linearLayout = (LinearLayout) home_layout.findViewById(R.id.attendances);
-                linearLayout.removeAllViews();
-
-                new AddRowTask().execute("Total:   ", String.valueOf(attendance.getInt("total")), R.id.attendances);
-                new AddRowTask().execute("Members: ", String.valueOf(attendance.getInt("member")), R.id.attendances);
-                new AddRowTask().execute("General: ", String.valueOf(attendance.getInt("general")), R.id.attendances);
+                mTotalTV.setText(String.valueOf(attendance.getInt("total")));
+                mMembersTV.setText(String.valueOf(attendance.getInt("member")));
+                mGeneralTV.setText(String.valueOf(attendance.getInt("general")));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -242,14 +247,5 @@ public class HomeFragment extends Fragment {
 
     private void getSurveys() {
         myAPI.getForAllRoles(APIWrapper.FIND_CURRENT_SURVEYS, myPerson, Survey.class);
-    }
-
-
-    private void setPersonAttributes() {
-        if ( acquireView() ) {
-            // set email
-            TextView textViewPersonName = (TextView) home_layout.findViewById(R.id.person_name);
-            textViewPersonName.setText("Hello " + myPerson.getFirst_name());
-        }
     }
 }

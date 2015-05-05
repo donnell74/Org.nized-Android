@@ -1,36 +1,93 @@
 package android.nized.org.domain;
 
+import android.util.Log;
+
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.loopj.android.http.RequestParams;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @JsonSerialize
 @JsonDeserialize
-public class Person implements Serializable {
-
+@Table(name = "Persons")
+public class Person extends Model implements Serializable {
+    @Column(name = "email", index = true)
 	private String email;
+    @Column(name = "password")
 	private String password;
+    @Column(name = "first_name")
 	private String first_name;
+    @Column(name = "last_name")
 	private String last_name;
+    @Column(name = "expire_date")
 	private Date expire_date;
+    @Column(name = "mobile_number")
 	private String mobile_number;
+    @Column(name = "is_local_paid")
 	private localPaidEnum is_local_paid;
+    @Column(name = "is_member")
 	private boolean is_member;
 	private classYearEnum class_year;
+    @Column(name = "last_sync_date")
 	private Date last_sync_date;
 	private List<Checkins> checkins;
-	private List<android.nized.org.domain.ClassBonus> class_bonuses;
-	private List<android.nized.org.domain.Role> roles;
+	private List<ClassBonus> class_bonuses;
+	private List<Role> roles;
     private List<String> _roles;
-    private List<android.nized.org.domain.ClassBonus> _class_bonuses;
-    private List<Date> _checkins;
+    private List<ClassBonus> _class_bonuses;
+    private List<String> _checkins;
+    @Column(name = "createdAt")
     private Date createdAt;
+    @Column(name = "updatedAt")
     private Date updatedAt;
+
+    public Person() {
+        super();
+    }
+
+    public int setFullName(String s) {
+        String[] name_parts = s.split(" ");// split string
+        if ( name_parts.length == 1 && name_parts[0].trim().equals("") ) {
+            return -1;
+        }
+
+        first_name = name_parts[0];
+
+        if ( name_parts.length == 2 ) {
+            last_name = name_parts[1];
+        }
+
+        return 0;
+    }
+
+    public String getFullName() {
+        return this.toString();
+    }
+
+    public RequestParams getUpdateParams() {
+        RequestParams updateParams = new RequestParams();
+        updateParams.put("email", email);
+        updateParams.put("first_name", first_name);
+        updateParams.put("last_name", last_name);
+        updateParams.put("mobile_number", mobile_number);
+        updateParams.put("is_local_paid", is_local_paid);
+        updateParams.put("is_member", is_member);
+        updateParams.put("class_year", class_year);
+
+        return updateParams;
+    }
 
     public enum classYearEnum {
         FRESHMAN, SOPHOMORE, JUNIOR, SENIOR
@@ -88,15 +145,25 @@ public class Person implements Serializable {
         this.mobile_number = mobile_number;
     }
 
-    public localPaidEnum getIs_local_paid() {
-        return is_local_paid;
+    public String getIs_local_paid_Str() {
+        if ( is_local_paid == localPaidEnum.PENDING ) {
+            return "Local Dues Pending";
+        } else if ( is_local_paid == localPaidEnum.TRUE ) {
+            return "Local Dues Paid";
+        } else {
+            return "Local Dues Not Paid";
+        }
+    }
+
+    public String getIs_local_paid() {
+        return String.valueOf(is_local_paid);
     }
 
     public void setIs_local_paid(localPaidEnum is_local_paid) {
         this.is_local_paid = is_local_paid;
     }
 
-    public boolean isIs_member() {
+    public boolean getIs_member() {
         return is_member;
     }
 
@@ -148,23 +215,37 @@ public class Person implements Serializable {
         return _roles;
     }
 
+    public List<String> get_roles_safe() {
+        if ( _roles == null ) {
+            _roles = new ArrayList<>();
+
+            if (roles != null) {
+                for (Role eachRole : roles) {
+                    _roles.add(eachRole.getName());
+                }
+            }
+        }
+
+        return _roles;
+    }
+
     public void set_roles(List<String> _roles) {
         this._roles = _roles;
     }
 
     public List<ClassBonus> get_class_bonuses() {
-        return _class_bonuses;
+        return (_class_bonuses == null) ? new ArrayList<ClassBonus>() : _class_bonuses;
     }
 
     public void set_class_bonuses(List<ClassBonus> _class_bonuses) {
         this._class_bonuses = _class_bonuses;
     }
 
-    public List<Date> get_checkins() {
+    public List<String> get_checkins() {
         return _checkins;
     }
 
-    public void set_checkins(List<Date> _checkins) {
+    public void set_checkins(List<String> _checkins) {
         this._checkins = _checkins;
     }
 
@@ -251,5 +332,28 @@ public class Person implements Serializable {
     @Override
     public String toString() {
         return  first_name + ' ' + last_name;
+    }
+
+    public String toStringAll() {
+        return "Person{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", first_name='" + first_name + '\'' +
+                ", last_name='" + last_name + '\'' +
+                ", expire_date=" + expire_date +
+                ", mobile_number='" + mobile_number + '\'' +
+                ", is_local_paid=" + is_local_paid +
+                ", is_member=" + is_member +
+                ", class_year=" + class_year +
+                ", last_sync_date=" + last_sync_date +
+                ", checkins=" + checkins +
+                ", class_bonuses=" + class_bonuses +
+                ", roles=" + roles +
+                ", _roles=" + _roles +
+                ", _class_bonuses=" + _class_bonuses +
+                ", _checkins=" + _checkins +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

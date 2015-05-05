@@ -5,7 +5,7 @@ package android.nized.org.orgnized;
  */
 
 import android.nized.org.api.APIWrapper;
-import android.nized.org.domain.Person;
+import android.nized.org.domain.ClassBonus;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,13 +27,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class AttendanceFragment extends Fragment {
+public class ClassBonusFragment extends Fragment {
 
     private ListView listView;
-    private ArrayList<String> dates = new ArrayList<String>();
+    private ArrayList<String> bonusStrings = new ArrayList<String>();
+    private ArrayList<ClassBonus> bonuses = new ArrayList<ClassBonus>();
     private View main_layout;
 
-    public AttendanceFragment(){}
+    public ClassBonusFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,29 +44,30 @@ public class AttendanceFragment extends Fragment {
 
         listView = (ListView) main_layout.findViewById(R.id.attendanceListView);
 
-        dates.add("Loading...");
+        bonusStrings.add("Loading...");
 
-        APIWrapper.get(APIWrapper.GET_ALL_CHECKIN_DATES, null, new JsonHttpResponseHandler() {
+        APIWrapper.get(APIWrapper.FIND_CLASS_BONUSES, null, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, final JSONArray jsonDates) {
-                dates = new ArrayList();
+            public void onSuccess(int statusCode, Header[] headers, final JSONArray jsonRows) {
+                bonusStrings = new ArrayList();
+                bonuses = new ArrayList<ClassBonus>();
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         MainActivity mainActivity = (MainActivity) getActivity();
                         Bundle args = new Bundle();
-                        args.putString("date", dates.get(i));
+                        args.putString("course_code", bonuses.get(i).getCourse_code());
+                        args.putString("semester", bonuses.get(i).getSemester());
                         mainActivity.changeFragment(MainActivity.PEOPLEFRAGMENT, args);
                     }
                 });
 
-
-                new AddDatesTask().execute(jsonDates);
+                new AddRowsTask().execute(jsonRows);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.w("People get failure", responseString);
+                Log.w("class bonuses failure", responseString);
                 Toast.makeText(getView().getContext(),
                         "Unable to gather people.",
                         Toast.LENGTH_LONG)
@@ -74,27 +76,31 @@ public class AttendanceFragment extends Fragment {
         });
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                main_layout.getContext(), android.R.layout.simple_list_item_1, dates);
+                main_layout.getContext(), android.R.layout.simple_list_item_1, bonusStrings);
         listView.setAdapter(adapter);
 
         return main_layout;
     }
 
-    public class AddDatesTask extends AsyncTask<Object, Void, Void> {
+    public class AddRowsTask extends AsyncTask<Object, Void, Void> {
 
         @Override
         protected Void doInBackground(Object[] objects) {
             JSONArray jsonDates = (JSONArray) objects[0];
             for (int i = 0; i < jsonDates.length(); i++) {
                 try {
-                    dates.add(jsonDates.getString(i));
+                    Log.i("class bonus", jsonDates.getJSONObject(i).toString());
+                    ClassBonus classBonus = (ClassBonus) APIWrapper.parseJSONOjbect(
+                            (JSONObject) jsonDates.getJSONObject(i), ClassBonus.class);
+                    bonusStrings.add(classBonus.toString());
+                    bonuses.add(classBonus);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
 
-            if ( dates.isEmpty() ) {
-                dates.add("No person data.");
+            if ( bonusStrings.isEmpty() ) {
+                bonusStrings.add("No person data.");
             }
 
             return null;
@@ -103,7 +109,7 @@ public class AttendanceFragment extends Fragment {
         @Override
         protected void onPostExecute(Void Result) {
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    main_layout.getContext(), android.R.layout.simple_list_item_1, dates);
+                    main_layout.getContext(), android.R.layout.simple_list_item_1, bonusStrings);
             listView.setAdapter(adapter);
         }
     }

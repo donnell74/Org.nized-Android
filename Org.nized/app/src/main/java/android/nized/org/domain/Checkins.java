@@ -3,11 +3,12 @@ package android.nized.org.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonSerialize
 @JsonDeserialize
-public class Checkins {
+public class Checkins implements Serializable {
     static final public int UNKNOWN_USER = 1;
     static final public int ALREADY_CHECKED_IN = 2;
 
