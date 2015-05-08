@@ -24,8 +24,8 @@
       <file leaf-file-name="APIWrapper.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Org.nized/app/src/main/java/android/nized/org/api/APIWrapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6737805">
-              <caret line="45" column="70" selection-start-line="45" selection-start-column="70" selection-end-line="45" selection-end-column="70" />
+            <state vertical-scroll-proportion="0.41463414">
+              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="41" selection-end-column="67" />
               <folding />
             </state>
           </provider>
@@ -414,8 +414,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Org.nized/app/src/main/java/android/nized/org/api/APIWrapper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6737805">
-          <caret line="45" column="70" selection-start-line="45" selection-start-column="70" selection-end-line="45" selection-end-column="70" />
+        <state vertical-scroll-proportion="0.41463414">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="41" selection-end-column="67" />
           <folding />
         </state>
       </provider>
