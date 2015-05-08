@@ -111,10 +111,10 @@ public class MainActivity extends ActionBarActivity
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
-        BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),
-                R.drawable.banner));
-
-        actionBar.setBackgroundDrawable(background);
+        //TODO: find actionbar background that works better
+        //BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(),
+        //        R.drawable.banner));
+        //actionBar.setBackgroundDrawable(background);
 
 
         mNavTitles = new ArrayList<String>(Arrays.asList( getResources().getStringArray(R.array.nav_titles_array) ));
