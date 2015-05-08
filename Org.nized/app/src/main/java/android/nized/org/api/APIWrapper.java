@@ -38,8 +38,8 @@ import java.util.concurrent.CountDownLatch;
  * Created by greg on 1/3/15.
  */
 public class APIWrapper {
-    private static final String BASE_URL = "http://www.reorconsultants.com:1337/";
-    //private static final String BASE_URL = "http://146.7.56.229:1337/";
+    //change to your own public ip. can be found by googleing "my IP".
+    private static final String BASE_URL = "http://localhost:1337";
     public static final String INSERT_PERSON = "person/insertperson/";
     public static final String FIND_PERSON = "person/find/";
     public static final String CHECK_IF_USER_EXIST = "person/checkifuserexist/";
