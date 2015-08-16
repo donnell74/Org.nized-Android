@@ -39,7 +39,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class APIWrapper {
     //change to your own public ip. can be found by googleing "my IP".
-    private static final String BASE_URL = "http://localhost:1337";
+    private static final String BASE_URL = "http://reorconsultants.com:9999/";
     public static final String INSERT_PERSON = "person/insertperson/";
     public static final String FIND_PERSON = "person/find/";
     public static final String CHECK_IF_USER_EXIST = "person/checkifuserexist/";
@@ -126,6 +126,7 @@ public class APIWrapper {
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         if ( isOnline() ) {
+            Log.i("getAbsoluteUrl", BASE_URL + url);
             getClient().post(getAbsoluteUrl(url), params, responseHandler);
         } else {
             Log.e("APIWrapper post", "not online, need to implement save request");

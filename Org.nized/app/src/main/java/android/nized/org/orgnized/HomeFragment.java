@@ -1,6 +1,5 @@
 package android.nized.org.orgnized;
 
-import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,16 +7,10 @@ import android.content.IntentFilter;
 import android.nized.org.api.APIUtilities;
 import android.nized.org.api.APIWrapper;
 import android.nized.org.domain.Announcement;
-import android.nized.org.domain.Announcements_Roles;
-import android.nized.org.domain.Checkins;
 import android.nized.org.domain.Person;
 import android.nized.org.domain.Survey;
-import android.nized.org.domain.Surveys_Roles;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -32,22 +25,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class HomeFragment extends Fragment {
     private Person myPerson = null;
@@ -104,8 +91,46 @@ public class HomeFragment extends Fragment {
 
         // setup view using myerson
         populateView();
+        populateHandlers();
 
         return rootView;
+    }
+
+    private void showPersonList() {
+
+    }
+
+    private void populateHandlers() {
+        final MainActivity mainActivity = (MainActivity) getActivity();
+        final DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        final Calendar calendar = Calendar.getInstance();
+        mTotalTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putString(PeopleFragment.DATE, m_ISO8601Local.format(calendar.getTime()));
+                args.putInt(PeopleFragment.TYPE_OF_ATTENDANCE, PeopleFragment.TOTAL_ATTENDANCE);
+                mainActivity.changeFragment(MainActivity.PEOPLEFRAGMENT, args);
+            }
+        });
+        mGeneralTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putString(PeopleFragment.DATE, m_ISO8601Local.format(calendar.getTime()));
+                args.putInt(PeopleFragment.TYPE_OF_ATTENDANCE, PeopleFragment.GENERAL_ATTENDANCE);
+                mainActivity.changeFragment(MainActivity.PEOPLEFRAGMENT, args);
+            }
+        });
+        mMembersTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putString(PeopleFragment.DATE, m_ISO8601Local.format(calendar.getTime()));
+                args.putInt(PeopleFragment.TYPE_OF_ATTENDANCE, PeopleFragment.MEMBER_ATTENDANCE);
+                mainActivity.changeFragment(MainActivity.PEOPLEFRAGMENT, args);
+            }
+        });
     }
 
     private boolean acquireView() {

@@ -28,7 +28,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class AttendanceFragment extends Fragment {
-
     private ListView listView;
     private ArrayList<String> dates = new ArrayList<String>();
     private View main_layout;

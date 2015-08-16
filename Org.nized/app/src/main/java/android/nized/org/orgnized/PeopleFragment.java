@@ -44,6 +44,12 @@ import java.util.List;
  */
 public class PeopleFragment extends Fragment {
     private static final String DATE_TO_SHOW = "date_to_show";
+    public static final String TYPE_OF_ATTENDANCE = "type_of_attendance";
+    public static final String DATE = "date";
+
+    public static final int TOTAL_ATTENDANCE = 0;
+    public static final int MEMBER_ATTENDANCE = 1;
+    public static final int GENERAL_ATTENDANCE = 2;
     View main_layout = null;
     ArrayList names = new ArrayList();
     ArrayList<Person> peopleList = new ArrayList<Person>();
@@ -52,6 +58,7 @@ public class PeopleFragment extends Fragment {
     private String mCourseCode = null;
     private String mSemester = null;
     private String mUrl = APIWrapper.FIND_PERSON;
+    private int type_of_attendance = 0;
 
     public PeopleFragment() {
         // Required empty public constructor
@@ -88,10 +95,12 @@ public class PeopleFragment extends Fragment {
                 requestParams.put("semester", mSemester);
             }
 
-            mDate = args.getString("date");
+            mDate = args.getString(PeopleFragment.DATE);
             if ( mDate != null ) {
                 mDate = mDate.split("T")[0];
             }
+
+            type_of_attendance = args.getInt(PeopleFragment.TYPE_OF_ATTENDANCE);
         }
 
         APIWrapper.get(mUrl, requestParams, new JsonHttpResponseHandler() {
@@ -135,7 +144,6 @@ public class PeopleFragment extends Fragment {
         @Override
         protected Void doInBackground(Object[] objects) {
             JSONArray people = (JSONArray) objects[0];
-            DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             for (int i = 0; i < people.length(); i++) {
                 Person thisPerson = null;
                 try {
@@ -145,6 +153,16 @@ public class PeopleFragment extends Fragment {
                     }
 
                     thisPerson = (Person) APIWrapper.parseJSONOjbect(objToParse, Person.class);
+                    if ( thisPerson.getIs_member() ) {
+                        if ( type_of_attendance == PeopleFragment.GENERAL_ATTENDANCE ) {
+                            continue;
+                        }
+                    } else {
+                        if ( type_of_attendance == PeopleFragment.MEMBER_ATTENDANCE ) {
+                            continue;
+                        }
+                    }
+
                     if ( mDate == null ) {
                         names.add(thisPerson.toString());
                         peopleList.add(thisPerson);
